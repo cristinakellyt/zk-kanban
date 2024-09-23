@@ -1,0 +1,22 @@
+@mixin flex-direction-justify-align($direction, $justify-content, $align-items) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify-content;
+  align-items: $align-items;
+}
+
+@mixin media-query($size) {
+  @media only screen and (min-width: $size) {
+    @content;
+  }
+}
+
+@mixin font-config($font-size, $font-weight, $color, $line-height, $letter-spacing) {
+  font-family: $main-font, sans-serif;
+  font-size: $font-size;
+  font-style: normal;
+  font-weight: $font-weight;
+  color: $color;
+  line-height: $line-height;
+  letter-spacing: $letter-spacing;
+}
