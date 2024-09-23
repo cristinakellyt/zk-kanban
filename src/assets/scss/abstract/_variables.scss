@@ -1,0 +1,44 @@
+// COLORS
+
+// Black
+$black: #000112;
+$very-dark-gray: #20212c;
+$dark-gray-1: #2b2c37;
+$dark-gray-2: #3e3f4e;
+$medium-grey: #828fa3;
+
+// Primary
+$primary-light: #f4f7fd;
+$primary-light-2: #e4ebfa;
+$pure-white: #ffffff;
+
+// Secondary
+$secondary-color: #635fc7;
+$secondary-color-light: #a8a4ff;
+
+// Color
+$red: #ea5555;
+$red-light: #ff9898;
+
+// UTILITIES
+
+$max-width: pxToRem(1440);
+
+// TYPOGRAPHY
+$main-font: 'Plus Jakarta Sans', sans-serif;
+
+// PLACEHOLDERS SELECTOR
+
+%flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// MEDIA QUERIES
+
+$laptop: 90em; // 1440px
+$laptop-medium: 64em; // 1024px
+$tablet: 48em; //768px
+$mobile-large: 26.563em; //425px
+$mobile-medium: 23.438em; //375px
+$mobile-small: 20em; //320px

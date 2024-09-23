@@ -1,0 +1,30 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: pxToRem(16);
+}
+
+body {
+  font-family: $main-font, sans-serif;
+  font-size: pxToRem(18);
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  display: inline-block;
+  vertical-align: text-bottom;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
