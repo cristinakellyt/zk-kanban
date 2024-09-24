@@ -1,14 +1,14 @@
 <template>
   <RouterLink :to="path" v-if="path">
     <button type="button" :class="classes">
-      {{ text }}
       <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
+      {{ text }}
     </button>
   </RouterLink>
 
   <button v-else type="button" :class="classes" @click="onClick">
-    {{ text }}
     <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
+    {{ text }}
   </button>
 </template>
 
@@ -79,6 +79,7 @@ const onClick = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: pxToRem(8);
   width: 100%;
   border: 0;
   border-radius: pxToRem(50);
@@ -87,8 +88,6 @@ const onClick = () => {
   padding: pxToRem(12) pxToRem(32);
   text-align: center;
   text-decoration: none;
-  user-select: none;
-  white-space: nowrap;
   font-family: $main-font;
   transition:
     background-color 0.3s,
@@ -162,7 +161,6 @@ const onClick = () => {
   }
 
   .button-icon {
-    margin-left: pxToRem(8);
     width: pxToRem(24);
   }
 }
