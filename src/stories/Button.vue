@@ -61,7 +61,7 @@ const onClick = () => {
   font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .storybook-button--primary {
-  background-color: $purple-color;
+  background-color: $primary-color;
   color: white;
 }
 .storybook-button--secondary {
