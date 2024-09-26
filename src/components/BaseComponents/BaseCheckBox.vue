@@ -1,20 +1,10 @@
 <template>
   <label v-if="syncLabel" class="check-box-wrapper" :for="id">
-    <input
-      :id="id"
-      v-model="checkedVModel"
-      type="checkbox"
-      class="check-box-input"
-    />
+    <input :id="id" v-model="checkedVModel" type="checkbox" class="check-box-input" />
     <span class="check-box-label-text">{{ labelText }}</span>
   </label>
-  <div v-else class="check-box-wrapper"">
-    <input
-      :id="id"
-      v-model="checkedVModel"
-      type="checkbox"
-      class="check-box-input"
-    />
+  <div v-else class="check-box-wrapper">
+    <input :id="id" v-model="checkedVModel" type="checkbox" class="check-box-input" />
     <span class="check-box-label-text">{{ labelText }}</span>
   </div>
 </template>
@@ -71,7 +61,6 @@ $check-box-size: pxToRem(20);
   .check-box-input {
     width: $check-box-size;
     height: $check-box-size;
-    // remove the browsers default checkbox style
     appearance: none;
     border-radius: pxToRem(4);
     border: pxToRem(1.5) solid $medium-grey;
@@ -104,6 +93,7 @@ $check-box-size: pxToRem(20);
     & + .check-box-label-text {
       font-weight: 600;
       font-family: $main-font;
+      font-size: inherit;
     }
   }
 }
