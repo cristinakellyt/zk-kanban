@@ -24,7 +24,7 @@ const props = withDefaults(
     /**
      * primary, secondary or tertiary button
      */
-    buttonStyle: string
+    buttonStyle?: string
     /**
      * size of the button
      */
@@ -45,6 +45,10 @@ const props = withDefaults(
      * if the button is inverted with the colors in background and text swapped
      */
     inverted?: boolean
+    /**
+     * if the button have an extra class
+     */
+    extraClass?: string
   }>(),
   {
     text: 'Button text',
@@ -60,7 +64,8 @@ const classes = computed(() => ({
   isDisabled: props.isDisabled,
   [`${props.size || 'medium'}`]: true,
   inverted: props.inverted,
-  [`${props.buttonStyle || 'primary'}`]: true
+  [`${props.buttonStyle || 'primary'}`]: true,
+  [`${props.extraClass || ''}`]: true
 }))
 
 const emit = defineEmits<{
@@ -95,17 +100,17 @@ const onClick = () => {
   cursor: pointer;
 
   &.primary {
-    background-color: $primary-color;
-    color: $white;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
 
     &:not(.isDisabled):hover {
-      background-color: $primary-color-light;
+      background-color: var(--primary-color-light);
     }
 
     &.inverted {
-      background-color: $white;
-      border: pxToRem(2) solid $primary-color;
-      color: $primary-color;
+      background-color: var(--bg-color);
+      border: pxToRem(2) solid var(--primary-color);
+      color: var(--primary-color);
 
       &:not(.isDisabled):hover {
         background-color: rgba($primary-color, 0.1);
@@ -114,29 +119,29 @@ const onClick = () => {
   }
 
   &.secondary {
-    background-color: rgba($primary-color, 0.1);
-    color: $primary-color;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
 
     &:not(.isDisabled):hover {
-      background-color: rgba($primary-color, 0.25);
+      background-color: rgba(var(--primary-color), 25%);
     }
   }
 
   &.tertiary {
-    background-color: $red;
-    color: $white;
+    background-color: var(--red);
+    color: var(--bg-color);
 
     &:not(.isDisabled):hover {
-      background-color: $red-light;
+      background-color: var(--red-light);
     }
 
     &.inverted {
-      background-color: $white;
-      border: pxToRem(2) solid $red;
-      color: $red;
+      background-color: var(--bg-color);
+      border: pxToRem(2) solid var(--red);
+      color: var(--red);
 
       &:not(.isDisabled):hover {
-        background-color: rgba($red, 0.1);
+        background-color: rgba(var(--red), 0.1);
       }
     }
   }
@@ -147,7 +152,7 @@ const onClick = () => {
   }
 
   &.medium {
-    font-size: pxToRem(14);
+    font-size: pxToRem(15);
   }
 
   &.large {
@@ -160,8 +165,8 @@ const onClick = () => {
     opacity: 0.5;
   }
 
-  .button-icon {
-    width: pxToRem(24);
-  }
+  // .button-icon {
+  //   width: pxToRem(24);
+  // }
 }
 </style>

@@ -12,7 +12,7 @@ html {
 
 body {
   font-family: $main-font, sans-serif;
-  font-size: pxToRem(18);
+  font-size: pxToRem(15);
 }
 
 ul {
@@ -27,4 +27,10 @@ img {
 
 a {
   text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
 }

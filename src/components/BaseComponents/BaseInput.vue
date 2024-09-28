@@ -156,7 +156,7 @@ const onBlur = (e: Event) => {
     }
 
     &.error {
-      border-color: $red;
+      border-color: $color-red;
     }
   }
 
@@ -166,7 +166,7 @@ const onBlur = (e: Event) => {
     top: 50%;
     transform: translateY(-30%);
     font-size: pxToRem(12);
-    color: $red;
+    color: $color-red;
     margin-top: pxToRem(5);
   }
 }
