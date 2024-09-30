@@ -101,7 +101,7 @@ const onClick = () => {
 
   &.primary {
     background-color: var(--primary-color);
-    color: var(--bg-color);
+    color: $white;
 
     &:not(.isDisabled):hover {
       background-color: var(--primary-color-light);
@@ -120,7 +120,7 @@ const onClick = () => {
 
   &.secondary {
     background-color: var(--secondary-color);
-    color: var(--primary-color);
+    color: $white;
 
     &:not(.isDisabled):hover {
       background-color: rgba(var(--primary-color), 25%);
@@ -129,7 +129,7 @@ const onClick = () => {
 
   &.tertiary {
     background-color: var(--red);
-    color: var(--bg-color);
+    color: $white;
 
     &:not(.isDisabled):hover {
       background-color: var(--red-light);
@@ -164,9 +164,5 @@ const onClick = () => {
     pointer-events: none;
     opacity: 0.5;
   }
-
-  // .button-icon {
-  //   width: pxToRem(24);
-  // }
 }
 </style>
