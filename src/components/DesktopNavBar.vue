@@ -1,11 +1,12 @@
 <template>
   <div>
     <AnimationTransition group name="slide">
+      <!-- Navbar -->
       <div v-if="showNavBar" class="nav-wrapper">
         <img class="logo" alt="kanban-logo" :src="imgLogo" />
 
         <div class="nav-inner">
-          <p class="boards">All boards ({{ boards.length }})</p>
+          <p class="board-title">All boards ({{ boards.length }})</p>
           <nav class="navigation">
             <ul class="navigation-list">
               <li class="navigation-item" v-for="board in boards" :key="board.id">
@@ -13,14 +14,17 @@
                 <p>{{ board.name }}</p>
               </li>
             </ul>
+          </nav>
+
+          <!-- Create new Board -->
+          <div class="create-board">
             <BaseButton
               @click="addNewBoard"
-              extra-class="create-board"
               text="Create New Board"
               icon="src/assets/icons/icon-add-purple.svg"
               inverted
             />
-          </nav>
+          </div>
         </div>
 
         <div class="nav-options">
@@ -65,6 +69,18 @@ const boards = ref([
   {
     id: 2,
     name: 'About'
+  },
+  {
+    id: 3,
+    name: 'Contact'
+  },
+  {
+    id: 4,
+    name: 'Services'
+  },
+  {
+    id: 5,
+    name: 'Portfolio'
   }
 ])
 
@@ -96,6 +112,7 @@ const toggleNavBarVisibility = () => {
 
 <style scoped lang="scss">
 @import '@/assets/scss/main.scss';
+
 $sidebar-width: pxToRem(300);
 
 .nav-wrapper {
@@ -104,7 +121,6 @@ $sidebar-width: pxToRem(300);
   justify-content: space-between;
   align-items: start;
   width: $sidebar-width;
-  padding: pxToRem(32);
   height: 100vh;
   background-color: $white;
   color: $medium-grey;
@@ -116,34 +132,40 @@ $sidebar-width: pxToRem(300);
   }
 
   .logo {
-    margin-bottom: pxToRem(46);
+    padding: pxToRem(32);
   }
 
   .nav-inner {
     margin-bottom: auto;
     font-weight: 600;
+    width: 100%;
 
-    .boards {
-      margin-bottom: pxToRem(16);
+    .board-title {
+      padding: pxToRem(16) pxToRem(32) pxToRem(24) pxToRem(32);
       text-transform: uppercase;
       letter-spacing: pxToRem(1);
       font-size: pxToRem(12);
     }
 
     .navigation-list {
-      list-style: none;
+      max-height: 30vh;
+      overflow-y: auto;
 
       .navigation-item {
         font-size: pxToRem(15);
         display: flex;
         align-items: center;
         gap: pxToRem(16);
-        margin: 0 0 pxToRem(16) pxToRem(-32);
+        margin: 0 pxToRem(32) pxToRem(16) 0;
         padding: pxToRem(12) pxToRem(32);
-        transition: all 0.3s ease-in-out;
         border-top-right-radius: pxToRem(50);
         border-bottom-right-radius: pxToRem(50);
         cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
 
         .board-icon {
           transition: all 0.3s ease-in-out;
@@ -162,12 +184,14 @@ $sidebar-width: pxToRem(300);
 
     .create-board {
       margin-top: pxToRem(32);
+      padding: 0 pxToRem(32);
     }
   }
 }
 
 .nav-options {
   width: 100%;
+  padding: pxToRem(32);
 }
 
 .toggle-navbar {

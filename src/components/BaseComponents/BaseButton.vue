@@ -2,13 +2,13 @@
   <RouterLink :to="path" v-if="path">
     <button type="button" :class="classes">
       <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
-      {{ text }}
+      <span class="button-text">{{ text }}</span>
     </button>
   </RouterLink>
 
   <button v-else type="button" :class="classes" @click="onClick">
     <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
-    {{ text }}
+    <span class="button-text">{{ text }}</span>
   </button>
 </template>
 
@@ -163,6 +163,24 @@ const onClick = () => {
     cursor: not-allowed;
     pointer-events: none;
     opacity: 0.5;
+  }
+}
+
+@media only screen and (max-width: $tablet) {
+  .button-wrapper {
+    padding: pxToRem(8) pxToRem(16);
+
+    &.small {
+      font-size: pxToRem(10);
+    }
+
+    &.medium {
+      font-size: pxToRem(12);
+    }
+
+    &.large {
+      font-size: pxToRem(14);
+    }
   }
 }
 </style>
