@@ -12,7 +12,26 @@ html {
 
 body {
   font-family: $main-font, sans-serif;
+}
+
+p {
+  font-size: pxToRem(16);
+}
+
+h1 {
+  font-size: pxToRem(24);
+}
+
+h2 {
+  font-size: pxToRem(20);
+}
+
+h3 {
   font-size: pxToRem(18);
+}
+
+h4 {
+  font-size: pxToRem(16);
 }
 
 ul {
@@ -27,4 +46,32 @@ img {
 
 a {
   text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+  h1 {
+    font-size: pxToRem(32);
+  }
+
+  h2 {
+    font-size: pxToRem(28);
+  }
+
+  h3 {
+    font-size: pxToRem(24);
+  }
+
+  h4 {
+    font-size: pxToRem(20);
+  }
+
+  p {
+    font-size: pxToRem(18);
+  }
 }

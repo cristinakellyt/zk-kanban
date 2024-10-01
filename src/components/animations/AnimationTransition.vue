@@ -77,4 +77,15 @@ defineProps({
   opacity: 0;
   transform: translateY(100%);
 }
+
+/** Slide animation **/
+.slide-enter-active,
+.slide-leave-active {
+  transition: all var(--duration) ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
 </style>
