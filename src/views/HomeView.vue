@@ -26,7 +26,7 @@
 
     <!-- Create/Edit new board -->
     <AnimationTransition>
-      <CreateEditNewBoard v-if="isCreateEditBoardOpen" @close="isCreateEditBoardOpen = false" />
+      <CreateEditBoard v-if="isCreateEditBoardOpen" @close="isCreateEditBoardOpen = false" />
     </AnimationTransition>
   </main>
 </template>
@@ -40,7 +40,7 @@ import DesktopNavBar from '@/components/DesktopNavBar.vue'
 import MobileNavBar from '@/components/MobileNavBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import AnimationTransition from '@/components/animations/AnimationTransition.vue'
-import CreateEditNewBoard from '@/components/CreateEditNewBoard.vue'
+import CreateEditBoard from '@/components/CreateEditBoard.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
