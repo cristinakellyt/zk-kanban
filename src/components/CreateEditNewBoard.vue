@@ -57,13 +57,15 @@ import { computed, ref } from 'vue'
 import BaseInput from './BaseComponents/BaseInput.vue'
 import BaseButton from './BaseComponents/BaseButton.vue'
 
-//data
-import { boardsData } from '@/data.ts'
+//store
+import { useBoardsStore } from '@/stores/BoardsStore.ts'
 
 const props = defineProps<{
   boardName?: string
   boardColumns?: string[]
 }>()
+
+const boardsStore = useBoardsStore()
 
 const emit = defineEmits(['close'])
 
@@ -87,31 +89,30 @@ const addNewColumn = () => {
 
 const deleteColumnInput = (index: number) => {
   columns.value.splice(index, 1)
-  console.log(columns.value)
 }
 
 const submitBoard = () => {
-  if (isEdit.value) {
-    //manage in store
-    console.log('edit board')
-  } else {
-    createNewBoard()
-  }
-}
-
-const createNewBoard = () => {
   boardNameError.value = boardName.value === ''
 
-  if (boardNameError.value) {
-    return
-  }
+  if (boardNameError.value) return
 
+  // Remove empty columns
   columns.value = columns.value.filter((column) => column !== '')
-  boardsData.push({
+
+  const boardData = {
     boardName: boardName.value,
     columnName: columns.value,
     tasks: []
-  })
+  }
+
+  if (isEdit.value) {
+    //test when it is ready
+    console.log('edit board')
+    boardsStore.updateBoard(boardData)
+  } else {
+    boardsStore.addBoard(boardData)
+  }
+
   emit('close')
 }
 </script>
