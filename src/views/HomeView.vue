@@ -4,6 +4,7 @@
     <DesktopNavBar
       class="nav-bar-desktop"
       @isNavBarVisible="adjustHeaderWidth"
+      @addNewBoard="openModalBoard"
       :imgLogo="getResponsiveLogo"
     />
     <!-- Mobile navbar -->
@@ -12,6 +13,7 @@
         class="nav-bar-mobile"
         v-if="isNavMobileOpen"
         @close="() => (isNavMobileOpen = false)"
+        @addNewBoard="openModalBoard"
       />
     </AnimationTransition>
     <!-- Header -->
@@ -21,6 +23,11 @@
       :imgLogo="getResponsiveLogo"
       @openMobileNav="showNavMobile"
     />
+
+    <!-- Create/Edit new board -->
+    <AnimationTransition>
+      <CreateEditNewBoard v-if="isCreateEditBoardOpen" @close="isCreateEditBoardOpen = false" />
+    </AnimationTransition>
   </main>
 </template>
 
@@ -33,6 +40,7 @@ import DesktopNavBar from '@/components/DesktopNavBar.vue'
 import MobileNavBar from '@/components/MobileNavBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import AnimationTransition from '@/components/animations/AnimationTransition.vue'
+import CreateEditNewBoard from '@/components/CreateEditNewBoard.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -44,6 +52,7 @@ const currentHeaderMarginLeft = ref(MARGIN_LEFT)
 const getResponsiveLogo = ref(imgLogoDark)
 const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
+const isCreateEditBoardOpen = ref(false)
 
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
   currentHeaderMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : 0
@@ -51,6 +60,10 @@ const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
 
 const showNavMobile = () => {
   isNavMobileOpen.value = true
+}
+
+const openModalBoard = () => {
+  isCreateEditBoardOpen.value = true
 }
 
 // Create a mutation observer to change the logo when the color theme changes

@@ -16,7 +16,7 @@
 
       <div class="nav-options">
         <BaseButton
-          @click="addNewBoard"
+          @click="onAddNewBoard"
           extra-class="create-board"
           text="Create New Board"
           icon="src/assets/icons/icon-add-purple.svg"
@@ -61,16 +61,14 @@ const boards = ref([
   }
 ])
 
-const emit = defineEmits(['close'])
-
-const addNewBoard = () => {
-  boards.value.push({
-    id: boards.value.length + 1,
-    name: `Board ${boards.value.length + 1}`
-  })
-}
+const emit = defineEmits(['close', 'addNewBoard'])
 
 const close = () => {
+  emit('close')
+}
+
+const onAddNewBoard = () => {
+  emit('addNewBoard')
   emit('close')
 }
 </script>
