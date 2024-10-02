@@ -2,7 +2,7 @@
   <div class="input-wrapper">
     <label :for="fieldName" class="input-label">{{ labelText }}</label>
     <input
-      :class="{ 'input-element': true, extraClass: !!extraClass, error: !!textError }"
+      :class="{ 'input-element': true, extraClass: !!extraClass, error: error }"
       :id="fieldName"
       :name="fieldName"
       :type="type"
@@ -11,13 +11,14 @@
       :maxlength="maxLength"
       :minlength="minLength"
       :pattern="pattern"
+      :required="isRequired"
       v-model="input"
       @input="onInput"
       @focus="onFocus"
       @blur="onBlur"
     />
 
-    <span v-if="textError" class="text-error">{{ textError }}</span>
+    <span v-if="error" class="text-error">{{ textError }}</span>
   </div>
 </template>
 
@@ -41,7 +42,7 @@ const props = withDefaults(
     /**
      * The value of the input
      */
-    input?: string
+    input?: string | number | undefined
     /**
      * If is readonly
      */
@@ -74,31 +75,40 @@ const props = withDefaults(
      * text error
      */
     textError?: string
+    /**
+     * error
+     */
+    error?: boolean
+    /**
+     * required
+     */
+    isRequired?: boolean
   }>(),
   {
     type: 'text',
     placeholder: 'Placeholder',
     isReadonly: false,
     debounce: 0,
-    labelText: 'Label',
     extraClass: '',
-    pattern: ''
+    isRequired: true
   }
 )
 
 const emit = defineEmits<{
-  (e: 'input', value: string): void
+  (e: 'inputChange', value: string): void
   (e: 'focus'): void
   (e: 'blur', value: string): void
 }>()
 
-const input = ref('')
+const input = ref()
 
 // watch for changes in the input prop
 watch(
   () => props.input,
   () => {
-    input.value = props.input
+    if (typeof props.input !== 'undefined' || props.input !== null) {
+      input.value = props.input
+    }
   },
   { immediate: true }
 )
@@ -106,7 +116,7 @@ watch(
 const onInput = (e: Event) => {
   const target = e.target as HTMLInputElement
   input.value = target.value
-  emit('input', input.value)
+  emit('inputChange', input.value)
 }
 
 const onFocus = () => {

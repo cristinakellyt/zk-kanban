@@ -12,8 +12,8 @@ interface SubTask {
   isDone: boolean
 }
 
-interface BoardColumn {
-  id: number
+interface Board {
+  boardName: string
   columnName: string[]
   tasks: Task[]
 }
@@ -39,20 +39,6 @@ let tasksData: Task[] = [
   }
 ]
 
-let boardsData: BoardColumn[] = [
-  {
-    id: 1,
-    columnName: ['Todo'],
-    tasks: tasksData
-  },
-  {
-    id: 2,
-    columnName: ['In Progress'],
-    tasks: []
-  },
-  {
-    id: 3,
-    columnName: ['Done'],
-    tasks: []
-  }
-]
+let boardsData: Board[] = []
+
+export { tasksData, boardsData }

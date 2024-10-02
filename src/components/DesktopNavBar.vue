@@ -19,7 +19,7 @@
           <!-- Create new Board -->
           <div class="create-board">
             <BaseButton
-              @click="addNewBoard"
+              @click="emit('addNewBoard')"
               text="Create New Board"
               icon="src/assets/icons/icon-add-purple.svg"
               inverted
@@ -96,13 +96,6 @@ const props = withDefaults(
 const emit = defineEmits(['addNewBoard', 'isNavBarVisible'])
 
 const showNavBar = ref(true)
-
-const addNewBoard = () => {
-  boards.value.push({
-    id: boards.value.length + 1,
-    name: `Board ${boards.value.length + 1}`
-  })
-}
 
 const toggleNavBarVisibility = () => {
   showNavBar.value = !showNavBar.value

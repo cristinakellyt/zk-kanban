@@ -1,12 +1,12 @@
 <template>
   <RouterLink :to="path" v-if="path">
-    <button type="button" :class="classes">
+    <button :type="buttonType" :class="classes">
       <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
       <span class="button-text">{{ text }}</span>
     </button>
   </RouterLink>
 
-  <button v-else type="button" :class="classes" @click="onClick">
+  <button v-else :type="buttonType" :class="classes" @click="onClick">
     <img v-if="icon" :src="icon" alt="icon" class="button-icon" />
     <span class="button-text">{{ text }}</span>
   </button>
@@ -24,7 +24,7 @@ const props = withDefaults(
     /**
      * primary, secondary or tertiary button
      */
-    buttonStyle?: string
+    buttonStyle?: 'primary' | 'secondary' | 'tertiary'
     /**
      * size of the button
      */
@@ -49,13 +49,18 @@ const props = withDefaults(
      * if the button have an extra class
      */
     extraClass?: string
+    /**
+     * type of the button
+     */
+    buttonType?: 'button' | 'submit' | 'reset'
   }>(),
   {
     text: 'Button text',
     size: 'medium',
     buttonStyle: 'primary',
     isDisabled: false,
-    inverted: false
+    inverted: false,
+    buttonType: 'button'
   }
 )
 
@@ -120,7 +125,7 @@ const onClick = () => {
 
   &.secondary {
     background-color: var(--secondary-color);
-    color: $white;
+    color: var(--primary-color);
 
     &:not(.isDisabled):hover {
       background-color: rgba(var(--primary-color), 25%);
@@ -168,8 +173,6 @@ const onClick = () => {
 
 @media only screen and (max-width: $tablet) {
   .button-wrapper {
-    padding: pxToRem(8) pxToRem(16);
-
     &.small {
       font-size: pxToRem(10);
     }
