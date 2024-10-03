@@ -23,7 +23,7 @@
           </nav>
 
           <!-- Create new Board -->
-          <div class="create-board">
+          <div class="create-board" v-if="boards.length > 0">
             <BaseButton
               @click="emit('addNewBoard')"
               text="Create New Board"
