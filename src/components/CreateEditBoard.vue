@@ -64,7 +64,7 @@ import BaseInput from './BaseComponents/BaseInput.vue'
 import BaseButton from './BaseComponents/BaseButton.vue'
 
 //store
-import { useBoardsStore } from '@/stores/BoardsStore.ts'
+import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
 import type { Board } from '@/types/appTypes'

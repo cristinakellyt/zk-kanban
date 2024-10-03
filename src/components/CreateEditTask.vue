@@ -85,7 +85,7 @@ import BaseButton from './BaseComponents/BaseButton.vue'
 import BaseDropdown from './BaseComponents/BaseDropdown.vue'
 
 //store
-import { useBoardsStore } from '@/stores/BoardsStore.ts'
+import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
 import type { SubTask, Task } from '@/types/appTypes'
@@ -251,7 +251,6 @@ fieldset {
   .task-wrapper {
     max-width: pxToRem(600);
     padding: pxToRem(32);
-    max-height: pxToRem(600);
     gap: pxToRem(32);
 
     .buttons-options {

@@ -91,7 +91,7 @@ $sidebar-width: pxToRem(300);
   flex-direction: column;
   justify-content: space-between;
   align-items: start;
-  width: $sidebar-width;
+  width: 80%;
   height: max-content;
   background-color: $white;
   color: $medium-grey;
@@ -179,6 +179,26 @@ $sidebar-width: pxToRem(300);
   display: flex;
   flex-direction: column;
   gap: pxToRem(24);
+}
+
+@include media-query($tablet) {
+  .mobile-nav {
+    .nav-inner {
+      .all-boards-count {
+        padding: pxToRem(16) pxToRem(32);
+      }
+
+      .navigation-list {
+        .navigation-item {
+          margin: 0 pxToRem(32) pxToRem(16) 0;
+          padding: pxToRem(12) pxToRem(32);
+        }
+      }
+    }
+  }
+  .nav-options {
+    padding: pxToRem(32);
+  }
 }
 
 @include media-query($laptop-medium) {
