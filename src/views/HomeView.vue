@@ -34,12 +34,16 @@
     <AnimationTransition>
       <CreateEditTask v-if="isCreateEditTaskOpen" @close="isCreateEditTaskOpen = false" />
     </AnimationTransition>
+
+    <div class="boards" ref="boardsElement">
+      <EmptyState v-if="checkEmptyState()" @addNewBoard="openModalBoard" :isEmpty="dataEmpty" />
+    </div>
   </main>
 </template>
 
 <script setup lang="ts">
 // Vue
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 // Components
 import DesktopNavBar from '@/components/DesktopNavBar.vue'
@@ -48,13 +52,21 @@ import TheHeader from '@/components/TheHeader.vue'
 import AnimationTransition from '@/components/animations/AnimationTransition.vue'
 import CreateEditBoard from '@/components/CreateEditBoard.vue'
 import CreateEditTask from '@/components/CreateEditTask.vue'
+import EmptyState from '@/components/EmptyState.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
 import imgLogoLight from '@/assets/icons/logo-light.svg'
 
+// Store
+import { useBoardsStore } from '@/stores/BoardsStore'
+
 const MARGIN_LEFT = 300
 const MARGIN_LEFT_ZERO = 0
+
+const boardsStore = useBoardsStore()
+const boards = computed(() => boardsStore.getBoardsData)
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const currentHeaderMarginLeft = ref(MARGIN_LEFT)
 const getResponsiveLogo = ref(imgLogoDark)
@@ -62,10 +74,23 @@ const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
 const isCreateEditBoardOpen = ref(false)
 const isCreateEditTaskOpen = ref(false)
+const dataEmpty = ref()
+
+const boardsElement = ref<HTMLElement | null>(null)
 
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
   currentHeaderMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
 }
+
+watch(
+  () => currentHeaderMarginLeft.value,
+  (newVal) => {
+    if (boardsElement.value) {
+      boardsElement.value.style.marginLeft = `${newVal}px`
+    }
+  },
+  { immediate: true }
+)
 
 const showNavMobile = () => {
   isNavMobileOpen.value = true
@@ -73,6 +98,18 @@ const showNavMobile = () => {
 
 const openModalBoard = () => {
   isCreateEditBoardOpen.value = true
+}
+
+const checkEmptyState = () => {
+  if (boards.value.length === 0) {
+    dataEmpty.value = 'board'
+    return true
+  } else if ('columns' in currentBoard.value) {
+    dataEmpty.value = 'column'
+    return currentBoard.value.columns.length === 0
+  } else {
+    return true
+  }
 }
 
 // Create a mutation observer to change the logo when the color theme changes
@@ -105,6 +142,13 @@ $navbar-width: pxToRem(300);
   transition: all 0.3s ease-in-out;
 }
 
+.boards {
+  background-color: var(--secondary-color);
+  padding: pxToRem(32);
+  height: 100vh;
+  transition: all 0.3s ease-in-out;
+}
+
 @include media-query($laptop-medium) {
   .nav-bar-desktop {
     display: block;
@@ -114,6 +158,10 @@ $navbar-width: pxToRem(300);
 
   .nav-bar-mobile {
     display: none;
+  }
+
+  .boards {
+    margin-left: $navbar-width;
   }
 }
 </style>

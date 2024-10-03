@@ -14,7 +14,7 @@
               @click="updateCurrentBoard(board.id)"
             >
               <img class="board-icon" src="@/assets/icons/icon-board.svg" alt="board-icon" />
-              <p class="board-name">{{ board.boardName }} {{ currentBoard.id }} {{ board.id }}</p>
+              <p class="board-name">{{ board.boardName }}</p>
             </li>
           </ul>
         </nav>
@@ -22,6 +22,7 @@
 
       <div class="nav-options">
         <BaseButton
+          v-if="boards.length > 0"
           @click="onAddNewBoard"
           extra-class="create-board"
           text="Create New Board"
