@@ -4,7 +4,7 @@
 
     <div class="task-wrapper">
       <div class="task-header">
-        <h2 class="task-title">{{ getTitle }}</h2>
+        <h3 class="task-title">{{ getTitle }}</h3>
       </div>
       <div class="task-content">
         <form id="taskForm" class="task-form" @submit.prevent="submitTask">
@@ -197,6 +197,11 @@ const submitTask = () => {
   padding: pxToRem(32) pxToRem(16);
   overflow-y: scroll;
   z-index: 100;
+
+  .task-title {
+    font-weight: 600;
+    color: var(--text-color);
+  }
 
   .task-form {
     display: flex;

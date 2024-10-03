@@ -146,11 +146,11 @@ const selectOption = (option: { id: number; name: string }) => {
   }
 
   .dropdown-text {
-    color: $medium-grey;
+    color: var(--medium-grey);
   }
 
   .dropdown-selected-text {
-    color: $black;
+    color: var(--text-color);
   }
 }
 
@@ -159,7 +159,7 @@ const selectOption = (option: { id: number; name: string }) => {
   top: pxToRem(75);
   left: 0;
   width: 100%;
-  background-color: $white;
+  background-color: var(--bg-color);
   border-radius: pxToRem(4);
   z-index: 100;
   box-shadow: 0 pxToRem(5) pxToRem(10) rgba($black, 0.1);

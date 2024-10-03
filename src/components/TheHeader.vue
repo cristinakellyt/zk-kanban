@@ -21,7 +21,7 @@
           text="Add new task"
           icon="src/assets/icons/icon-add-white.svg"
           @click="emit('addNewTask')"
-          :isDisabled="currentBoard.columns ? true : false"
+          :isDisabled="isAddTaskDisabled()"
         />
         <div class="icon-options-wrapper">
           <img
@@ -85,6 +85,15 @@ const isNavMobileOpen = ref(false)
 const openMobileNav = () => {
   isNavMobileOpen.value = true
   emit('openMobileNav')
+}
+
+const isAddTaskDisabled = () => {
+  // Check if the current board has columns, if not, disable the button
+  if ('columns' in currentBoard.value) {
+    return currentBoard.value.columns.length === 0
+  } else {
+    return true
+  }
 }
 </script>
 

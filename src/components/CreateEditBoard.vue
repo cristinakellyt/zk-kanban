@@ -4,7 +4,7 @@
 
     <div class="board-wrapper">
       <div class="board-header">
-        <h2 class="board-title">{{ getTitle }}</h2>
+        <h3 class="board-title">{{ getTitle }}</h3>
       </div>
       <div class="board-content">
         <form id="boardForm" class="board-form" @submit.prevent="submitBoard">
@@ -171,6 +171,11 @@ const submitBoard = () => {
   padding: pxToRem(16);
   overflow-y: scroll;
   z-index: 100;
+
+  .board-title {
+    font-weight: 600;
+    color: var(--text-color);
+  }
 
   .board-form {
     display: flex;
