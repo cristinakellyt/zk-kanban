@@ -3,9 +3,9 @@
 // Black
 $black: #000112;
 $very-dark-gray: #20212c;
-$dark-gray-1: #2b2c37;
-$dark-gray-2: #3e3f4e;
-$medium-grey: #828fa3;
+$dark-gray-1: rgb(43, 44, 55);
+$dark-gray-2: rgb(62, 63, 78);
+$medium-grey: rgb(130, 143, 163);
 
 // Primary
 $primary-color: #635fc7;
@@ -28,10 +28,13 @@ $white: #ffffff;
   --text-color: rgb(0, 1, 18);
   --primary-color: rgb(99, 95, 199);
   --primary-color-light: rgb(168, 164, 255);
+  --primary-color-light-2: rgb(168, 164, 255, 10%);
+  --primary-color-light-3: rgb(168, 164, 255, 0.25);
   --secondary-color: rgb(244, 247, 253);
   --secondary-color-2: rgb(228, 235, 250);
   --red: rgb(234, 85, 85);
   --red-light: rgb(255, 152, 152);
+  --medium-grey: rgb(130, 143, 163);
 }
 
 .dark-theme {
@@ -39,10 +42,13 @@ $white: #ffffff;
   --text-color: rgb(255, 255, 255);
   --primary-color: rgb(99, 95, 199);
   --primary-color-light: rgb(168, 164, 255);
+  --primary-color-light-2: rgb(168, 164, 255, 0.1);
+  --primary-color-light-3: var(--text-color);
   --secondary-color: rgb(43, 44, 55);
   --secondary-color-2: rgb(62, 63, 78);
   --red: rgb(234, 85, 85);
   --red-light: rgb(255, 152, 152);
+  --medium-grey: var(--text-color);
 }
 // UTILITIES
 

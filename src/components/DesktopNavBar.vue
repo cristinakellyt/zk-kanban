@@ -6,12 +6,18 @@
         <img class="logo" alt="kanban-logo" :src="imgLogo" />
 
         <div class="nav-inner">
-          <p class="board-title">All boards ({{ boards.length }})</p>
+          <p class="all-boards-count">All boards ({{ boards.length }})</p>
           <nav class="navigation">
             <ul class="navigation-list">
-              <li class="navigation-item" v-for="board in boards" :key="board.id">
+              <li
+                class="navigation-item"
+                v-for="board in boards"
+                :key="board.id"
+                :class="{ 'board-active': currentBoard.id === board.id }"
+                @click="updateCurrentBoard(board.id)"
+              >
                 <img class="board-icon" src="@/assets/icons/icon-board.svg" alt="board-icon" />
-                <p>{{ board.name }}</p>
+                <p class="board-name">{{ board.boardName }}</p>
               </li>
             </ul>
           </nav>
@@ -50,7 +56,7 @@
 
 <script setup lang="ts">
 //Vue
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
@@ -60,29 +66,13 @@ import AnimationTransition from '@/components/animations/AnimationTransition.vue
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
 
-// Replace for proper data when its ready
-const boards = ref([
-  {
-    id: 1,
-    name: 'Home'
-  },
-  {
-    id: 2,
-    name: 'About'
-  },
-  {
-    id: 3,
-    name: 'Contact'
-  },
-  {
-    id: 4,
-    name: 'Services'
-  },
-  {
-    id: 5,
-    name: 'Portfolio'
-  }
-])
+//store
+import { useBoardsStore } from '@/stores/BoardsStore'
+
+const boardsStore = useBoardsStore()
+
+const boards = computed(() => boardsStore.getBoardsData)
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const props = withDefaults(
   defineProps<{
@@ -100,6 +90,10 @@ const showNavBar = ref(true)
 const toggleNavBarVisibility = () => {
   showNavBar.value = !showNavBar.value
   emit('isNavBarVisible', showNavBar.value)
+}
+
+const updateCurrentBoard = (boardId: number) => {
+  boardsStore.setCurrentBoard(boardId)
 }
 </script>
 
@@ -133,11 +127,12 @@ $sidebar-width: pxToRem(300);
     font-weight: 600;
     width: 100%;
 
-    .board-title {
+    .all-boards-count {
       padding: pxToRem(16) pxToRem(32) pxToRem(24) pxToRem(32);
       text-transform: uppercase;
       letter-spacing: pxToRem(1);
       font-size: pxToRem(12);
+      color: var(--medium-gray);
     }
 
     .navigation-list {
@@ -158,6 +153,21 @@ $sidebar-width: pxToRem(300);
 
         &:last-child {
           margin-bottom: 0;
+        }
+
+        &.board-active {
+          background-color: var(--primary-color);
+          .board-icon,
+          .board-name {
+            // color: $white;
+            filter: brightness(10);
+          }
+        }
+
+        .board-name {
+          font-size: pxToRem(14);
+          font-weight: 600;
+          color: var(--medium-gray);
         }
 
         .board-icon {

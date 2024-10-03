@@ -118,17 +118,17 @@ const onClick = () => {
       color: var(--primary-color);
 
       &:not(.isDisabled):hover {
-        background-color: rgba($primary-color, 0.1);
+        background-color: var(--primary-color-light-2);
       }
     }
   }
 
   &.secondary {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color-light-3);
     color: var(--primary-color);
 
     &:not(.isDisabled):hover {
-      background-color: rgba(var(--primary-color), 25%);
+      background-color: var(--primary-color-light-2);
     }
   }
 
@@ -146,7 +146,7 @@ const onClick = () => {
       color: var(--red);
 
       &:not(.isDisabled):hover {
-        background-color: rgba(var(--red), 0.1);
+        background-color: var(--red-light-2);
       }
     }
   }

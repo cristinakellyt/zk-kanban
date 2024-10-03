@@ -8,7 +8,7 @@
     <!-- Board title -->
     <div class="content-wrapper">
       <h1 class="board-title" @click="openMobileNav">
-        My App
+        {{ currentBoard.boardName ? currentBoard.boardName : 'Board' }}
         <img
           src="@/assets/icons/icon-chevron-down.svg"
           class="arrow"
@@ -17,7 +17,12 @@
       </h1>
       <!-- Header options -->
       <div class="header-options">
-        <BaseButton text="Add new task" icon="src/assets/icons/icon-add-white.svg" is-disabled />
+        <BaseButton
+          text="Add new task"
+          icon="src/assets/icons/icon-add-white.svg"
+          @click="emit('addNewTask')"
+          :isDisabled="isAddTaskDisabled()"
+        />
         <div class="icon-options-wrapper">
           <img
             src="@/assets/icons/icon-vertical-ellipsis.svg"
@@ -32,13 +37,20 @@
 
 <script setup lang="ts">
 // Vue
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
 
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
+
+//Store
+import { useBoardsStore } from '@/stores/BoardsStore'
+
+const boardsStore = useBoardsStore()
+
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const props = withDefaults(
   defineProps<{
@@ -51,7 +63,7 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits(['openMobileNav'])
+const emit = defineEmits(['openMobileNav', 'addNewTask'])
 
 const pxToRem = (px: number) => `${px / 16}rem`
 
@@ -73,6 +85,15 @@ const isNavMobileOpen = ref(false)
 const openMobileNav = () => {
   isNavMobileOpen.value = true
   emit('openMobileNav')
+}
+
+const isAddTaskDisabled = () => {
+  // Check if the current board has columns, if not, disable the button
+  if ('columns' in currentBoard.value) {
+    return currentBoard.value.columns.length === 0
+  } else {
+    return true
+  }
 }
 </script>
 

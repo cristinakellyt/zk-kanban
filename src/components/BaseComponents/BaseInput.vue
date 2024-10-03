@@ -1,7 +1,25 @@
 <template>
   <div class="input-wrapper">
     <label :for="fieldName" class="input-label">{{ labelText }}</label>
+    <textarea
+      v-if="type === 'textarea'"
+      :class="{ 'textarea-element': true, extraClass: !!extraClass, error: error }"
+      :id="fieldName"
+      :name="fieldName"
+      :placeholder="placeholder"
+      :readonly="isReadOnly"
+      :maxlength="maxLength"
+      :minlength="minLength"
+      :pattern="pattern"
+      :required="isRequired"
+      v-model="input"
+      @input="onInput"
+      @focus="onFocus"
+      @blur="onBlur"
+    ></textarea>
+
     <input
+      v-else
       :class="{ 'input-element': true, extraClass: !!extraClass, error: error }"
       :id="fieldName"
       :name="fieldName"
@@ -135,25 +153,50 @@ const onBlur = (e: Event) => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: pxToRem(10);
   position: relative;
 
   .input-label {
     font-weight: 600;
     font-size: pxToRem(12);
     margin-bottom: pxToRem(5);
-    color: $medium-grey;
+    color: var(--medium-grey);
   }
 
-  .input-element {
+  .textarea-element {
     width: 100%;
-
+    background-color: inherit;
+    height: pxToRem(100);
     padding: pxToRem(10) pxToRem(15);
     border: pxToRem(1) solid rgba($medium-grey, 0.6);
     border-radius: pxToRem(5);
     transition: border-color 0.2s;
     font-family: $main-font;
-    color: $black;
+    color: var(--text-color);
+
+    &::placeholder {
+      color: rgba($medium-grey, 0.6);
+      font-size: pxToRem(12);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+
+    &.error {
+      border-color: $color-red;
+    }
+  }
+
+  .input-element {
+    width: 100%;
+    background-color: inherit;
+    padding: pxToRem(10) pxToRem(15);
+    border: pxToRem(1) solid rgba($medium-grey, 0.6);
+    border-radius: pxToRem(5);
+    transition: border-color 0.2s;
+    font-family: $main-font;
+    color: var(--text-color);
 
     &::placeholder {
       color: rgba($medium-grey, 0.6);
