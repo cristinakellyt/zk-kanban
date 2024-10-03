@@ -2,7 +2,7 @@
   <div class="dropdown-wrapper">
     <!-- The field title -->
     <div v-if="fieldTitle" class="dropdown-title-box">
-      <h3 class="basic-input-title">{{ fieldTitle }}</h3>
+      <span class="basic-input-title">{{ fieldTitle }}</span>
     </div>
 
     <!-- Mask - Used to automatically close the dropdown-->
@@ -56,7 +56,7 @@ const props = withDefaults(
     /**
      * The placeholder of the dropdown
      */
-    placeholder: string
+    placeholder?: string
     /**
      * The title of the dropdown
      */
@@ -72,12 +72,14 @@ const props = withDefaults(
   }>(),
   {
     fieldTitle: '',
-    selectedOption: null
+    selectedOption: null,
+    placeholder: 'Select an option'
   }
 )
 
 const isDropdownShown = ref(false)
 const selected = ref()
+const emit = defineEmits(['selectedValue'])
 
 // If there is a new value passed from the parent, the dropdown should display that new value.
 watch(
@@ -96,6 +98,7 @@ const toggleDropdown = () => {
 
 const selectOption = (option: { id: number; name: string }) => {
   selected.value = option
+  emit('selectedValue', option)
 }
 </script>
 
@@ -109,7 +112,7 @@ const selectOption = (option: { id: number; name: string }) => {
 
 .dropdown-title-box {
   font-weight: 600;
-  font-size: pxToRem(16);
+  font-size: pxToRem(12);
   font-family: $main-font;
   margin-bottom: pxToRem(5);
   color: $medium-grey;

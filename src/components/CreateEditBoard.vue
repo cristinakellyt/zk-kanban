@@ -21,19 +21,20 @@
           />
           <fieldset>
             <legend class="label" v-if="columns.length > 0">Columns</legend>
-            <div v-for="(column, index) in columns" :key="index" class="columns-input">
+            <div v-for="(column, index) in columns" :key="column.id" class="columns-input">
               <BaseInput
                 type="text"
                 placeholder="e.g. Column Name"
-                :fieldName="`column${index}`"
-                :input="column"
+                :fieldName="`column${column.id}`"
+                :input="column.name"
+                @inputChange="(value: string) => (columns[index].name = value)"
                 :isRequired="false"
               />
               <img
                 src="@/assets/icons/icon-cross.svg"
                 alt="delete-icon"
                 class="delete-icon"
-                @click="deleteColumnInput(index)"
+                @click="deleteColumnInput(column.id)"
                 :isRequired="false"
               />
             </div>
@@ -42,7 +43,12 @@
       </div>
 
       <div class="buttons-options">
-        <BaseButton text="Add New Column" buttonStyle="secondary" @click="addNewColumn" />
+        <BaseButton
+          text="Add New Column"
+          buttonStyle="secondary"
+          @click="addNewColumn"
+          icon="src/assets/icons/icon-add-purple.svg"
+        />
         <BaseButton text="Create New Board" buttonType="submit" form="boardForm" />
       </div>
     </div>
@@ -60,17 +66,30 @@ import BaseButton from './BaseComponents/BaseButton.vue'
 //store
 import { useBoardsStore } from '@/stores/BoardsStore.ts'
 
+//Types
+import type { Board } from '@/types/appTypes'
+
+//TODO: Refactor this function to a helper file
+const generateNumericId = () => {
+  return Math.floor(Math.random() * 1000000)
+}
+
 const props = defineProps<{
   boardName?: string
-  boardColumns?: string[]
+  boardColumns?: { id: number; name: string }[]
 }>()
 
 const boardsStore = useBoardsStore()
 
 const emit = defineEmits(['close'])
 
+const BOILERPLATE_COLUMNS = [{ id: generateNumericId(), name: 'To Do' }] as {
+  id: number
+  name: string
+}[]
+
 const isEdit = ref(props.boardName ? true : false)
-const columns = ref(props.boardColumns ? props.boardColumns : ['Todo', 'Doing', ''])
+const columns = ref(props.boardColumns ? props.boardColumns : BOILERPLATE_COLUMNS)
 const boardName = ref(props.boardName ? props.boardName : '')
 const boardNameError = ref(false)
 
@@ -84,11 +103,11 @@ const updateBoardName = (value: string) => {
 }
 
 const addNewColumn = () => {
-  columns.value.push('')
+  columns.value.push({ id: generateNumericId(), name: '' })
 }
 
-const deleteColumnInput = (index: number) => {
-  columns.value.splice(index, 1)
+const deleteColumnInput = (id: number) => {
+  columns.value = columns.value.filter((column) => column.id !== id)
 }
 
 const submitBoard = () => {
@@ -97,17 +116,21 @@ const submitBoard = () => {
   if (boardNameError.value) return
 
   // Remove empty columns
-  columns.value = columns.value.filter((column) => column !== '')
+  columns.value = columns.value.filter((column) => column.name !== '')
 
-  const boardData = {
-    boardName: boardName.value,
-    columnName: columns.value,
-    tasks: []
-  }
+  // Create unique IDs for board and columns
+  const boardId = generateNumericId()
+
+  const boardData = JSON.parse(
+    JSON.stringify({
+      id: boardId,
+      boardName: boardName.value,
+      columns: columns.value,
+      tasks: []
+    })
+  ) as Board
 
   if (isEdit.value) {
-    //test when it is ready
-    console.log('edit board')
     boardsStore.updateBoard(boardData)
   } else {
     boardsStore.addBoard(boardData)
@@ -149,17 +172,24 @@ const submitBoard = () => {
   overflow-y: scroll;
   z-index: 100;
 
+  .board-form {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(24);
+  }
+
   .label {
     font-weight: 600;
     font-size: pxToRem(12);
     margin-bottom: pxToRem(5);
-    color: $medium-grey;
+    color: var(--medium-grey);
   }
 
   .columns-input {
     display: flex;
     gap: pxToRem(16);
     align-items: center;
+    margin-bottom: pxToRem(10);
   }
 
   .delete-icon {
@@ -174,7 +204,7 @@ const submitBoard = () => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: pxToRem(24);
+    gap: pxToRem(16);
     width: 100%;
   }
 }

@@ -3,12 +3,18 @@
     <div class="backdrop" @click="close"></div>
     <div class="mobile-nav">
       <div class="nav-inner">
-        <p class="boards">All boards ({{ boards.length }})</p>
+        <p class="all-boards-count">All boards ({{ boards.length }})</p>
         <nav class="navigation">
           <ul class="navigation-list">
-            <li class="navigation-item" v-for="board in boards" :key="board.id">
+            <li
+              class="navigation-item"
+              v-for="board in boards"
+              :key="board.id"
+              :class="{ 'board-active': currentBoard.id === board.id }"
+              @click="updateCurrentBoard(board.id)"
+            >
               <img class="board-icon" src="@/assets/icons/icon-board.svg" alt="board-icon" />
-              <p>{{ board.name }}</p>
+              <p class="board-name">{{ board.boardName }} {{ currentBoard.id }} {{ board.id }}</p>
             </li>
           </ul>
         </nav>
@@ -31,37 +37,20 @@
 
 <script setup lang="ts">
 //Vue
-import { ref } from 'vue'
+import { computed } from 'vue'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
 import SwitcherColorTheme from '@/components/SwitcherColorTheme.vue'
 
-// Replace for proper data when its ready
-const boards = ref([
-  {
-    id: 1,
-    name: 'Home'
-  },
-  {
-    id: 2,
-    name: 'About'
-  },
-  {
-    id: 3,
-    name: 'Contact'
-  },
-  {
-    id: 4,
-    name: 'Services'
-  },
-  {
-    id: 5,
-    name: 'Portfolio'
-  }
-])
+//Store
+import { useBoardsStore } from '@/stores/BoardsStore'
 
+const boardsStore = useBoardsStore()
 const emit = defineEmits(['close', 'addNewBoard'])
+
+const boards = computed(() => boardsStore.getBoardsData)
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const close = () => {
   emit('close')
@@ -70,6 +59,10 @@ const close = () => {
 const onAddNewBoard = () => {
   emit('addNewBoard')
   emit('close')
+}
+
+const updateCurrentBoard = (boardId: number) => {
+  boardsStore.setCurrentBoard(boardId)
 }
 </script>
 
@@ -115,16 +108,17 @@ $sidebar-width: pxToRem(300);
     font-weight: 600;
     width: 100%;
 
-    .boards {
+    .all-boards-count {
       text-transform: uppercase;
       letter-spacing: pxToRem(1);
       font-size: pxToRem(12);
       padding: pxToRem(16);
+      color: var(--medium-grey);
     }
 
     .navigation-list {
       list-style: none;
-      overflow-y: scroll;
+      overflow-y: auto;
       max-height: 30vh;
 
       .navigation-item {
@@ -139,6 +133,21 @@ $sidebar-width: pxToRem(300);
         border-bottom-right-radius: pxToRem(50);
         cursor: pointer;
 
+        &.board-active {
+          background-color: var(--primary-color);
+          .board-icon,
+          .board-name {
+            filter: brightness(10);
+          }
+        }
+
+        .board-name {
+          font-size: pxToRem(14);
+          font-weight: 600;
+          color: var(--medium-grey);
+          transition: all 0.3s ease-in-out;
+        }
+
         .board-icon {
           transition: all 0.3s ease-in-out;
         }
@@ -149,6 +158,10 @@ $sidebar-width: pxToRem(300);
 
           .board-icon {
             filter: brightness(10);
+          }
+
+          .board-name {
+            color: $white;
           }
         }
       }

@@ -22,11 +22,17 @@
       :headerMarginLeft="currentHeaderMarginLeft"
       :imgLogo="getResponsiveLogo"
       @openMobileNav="showNavMobile"
+      @addNewTask="isCreateEditTaskOpen = true"
     />
 
     <!-- Create/Edit new board -->
     <AnimationTransition>
       <CreateEditBoard v-if="isCreateEditBoardOpen" @close="isCreateEditBoardOpen = false" />
+    </AnimationTransition>
+
+    <!-- Create/Edit task -->
+    <AnimationTransition>
+      <CreateEditTask v-if="isCreateEditTaskOpen" @close="isCreateEditTaskOpen = false" />
     </AnimationTransition>
   </main>
 </template>
@@ -41,21 +47,24 @@ import MobileNavBar from '@/components/MobileNavBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import AnimationTransition from '@/components/animations/AnimationTransition.vue'
 import CreateEditBoard from '@/components/CreateEditBoard.vue'
+import CreateEditTask from '@/components/CreateEditTask.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
 import imgLogoLight from '@/assets/icons/logo-light.svg'
 
 const MARGIN_LEFT = 300
+const MARGIN_LEFT_ZERO = 0
 
 const currentHeaderMarginLeft = ref(MARGIN_LEFT)
 const getResponsiveLogo = ref(imgLogoDark)
 const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
 const isCreateEditBoardOpen = ref(false)
+const isCreateEditTaskOpen = ref(false)
 
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
-  currentHeaderMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : 0
+  currentHeaderMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
 }
 
 const showNavMobile = () => {
