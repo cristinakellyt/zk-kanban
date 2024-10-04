@@ -49,7 +49,11 @@
           @click="addNewColumn"
           icon="src/assets/icons/icon-add-purple.svg"
         />
-        <BaseButton text="Create New Board" buttonType="submit" form="boardForm" />
+        <BaseButton
+          :text="isEdit ? 'Update Board' : 'Create New Board'"
+          buttonType="submit"
+          form="boardForm"
+        />
       </div>
     </div>
   </div>
@@ -75,8 +79,7 @@ const generateNumericId = () => {
 }
 
 const props = defineProps<{
-  boardName?: string
-  boardColumns?: { id: number; name: string }[]
+  isEdit?: boolean
 }>()
 
 const boardsStore = useBoardsStore()
@@ -88,10 +91,14 @@ const BOILERPLATE_COLUMNS = [{ id: generateNumericId(), name: 'To Do' }] as {
   name: string
 }[]
 
-const isEdit = ref(props.boardName ? true : false)
-const columns = ref(props.boardColumns ? props.boardColumns : BOILERPLATE_COLUMNS)
-const boardName = ref(props.boardName ? props.boardName : '')
+const boards = computed(() => boardsStore.getBoardsData)
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
+
+const isEdit = ref(props.isEdit ? props.isEdit : false)
+const columns = ref(props.isEdit ? currentBoard.value.columns : BOILERPLATE_COLUMNS)
+const boardName = ref(props.isEdit ? currentBoard.value.boardName : '')
 const boardNameError = ref(false)
+const boardId = ref(props.isEdit ? currentBoard.value.id : generateNumericId())
 
 const getTitle = computed(() => {
   return isEdit.value ? 'Edit board' : 'Add New Board'
@@ -118,12 +125,9 @@ const submitBoard = () => {
   // Remove empty columns
   columns.value = columns.value.filter((column) => column.name !== '')
 
-  // Create unique IDs for board and columns
-  const boardId = generateNumericId()
-
   const boardData = JSON.parse(
     JSON.stringify({
-      id: boardId,
+      id: boardId.value,
       boardName: boardName.value,
       columns: columns.value,
       tasks: []
@@ -131,7 +135,7 @@ const submitBoard = () => {
   ) as Board
 
   if (isEdit.value) {
-    boardsStore.updateBoard(boardData)
+    boardsStore.updateBoard(currentBoard.value.id, boardData)
   } else {
     boardsStore.addBoard(boardData)
   }

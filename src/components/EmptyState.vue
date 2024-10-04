@@ -5,7 +5,7 @@
       <BaseButton
         :text="getButtonText"
         buttonStyle="primary"
-        @click="emit('addNewBoard')"
+        @click="selectEmitType"
         icon="src/assets/icons/icon-add-white.svg"
       />
     </div>
@@ -34,6 +34,14 @@ const getTitle = computed(() => {
 const getButtonText = computed(() => {
   return props.isEmpty === 'column' ? 'Add New Column' : 'Add New Board'
 })
+
+const selectEmitType = () => {
+  if (props.isEmpty === 'column') {
+    emit('addNewBoard', true)
+  } else {
+    emit('addNewBoard')
+  }
+}
 </script>
 
 <style scoped lang="scss">
