@@ -16,10 +16,11 @@
         @addNewBoard="openModalBoard"
       />
     </AnimationTransition>
+
     <!-- Header -->
     <TheHeader
       class="header"
-      :headerMarginLeft="currentHeaderMarginLeft"
+      :headerMarginLeft="currentMarginLeft"
       :imgLogo="getResponsiveLogo"
       @openMobileNav="showNavMobile"
       @addNewTask="isCreateEditTaskOpen = true"
@@ -27,7 +28,11 @@
 
     <!-- Create/Edit new board -->
     <AnimationTransition>
-      <CreateEditBoard v-if="isCreateEditBoardOpen" @close="isCreateEditBoardOpen = false" />
+      <CreateEditBoard
+        v-if="isCreateEditBoardOpen"
+        @close="isCreateEditBoardOpen = false"
+        :isEdit="isBoardEdit"
+      />
     </AnimationTransition>
 
     <!-- Create/Edit task -->
@@ -36,6 +41,7 @@
     </AnimationTransition>
 
     <div class="boards" ref="boardsElement">
+      <!-- Empty columns or boards -->
       <EmptyState v-if="checkEmptyState()" @addNewBoard="openModalBoard" :isEmpty="dataEmpty" />
     </div>
   </main>
@@ -68,22 +74,22 @@ const boardsStore = useBoardsStore()
 const boards = computed(() => boardsStore.getBoardsData)
 const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
-const currentHeaderMarginLeft = ref(MARGIN_LEFT)
+const currentMarginLeft = ref(MARGIN_LEFT)
 const getResponsiveLogo = ref(imgLogoDark)
 const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
 const isCreateEditBoardOpen = ref(false)
 const isCreateEditTaskOpen = ref(false)
 const dataEmpty = ref()
-
+const isBoardEdit = ref(false)
 const boardsElement = ref<HTMLElement | null>(null)
 
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
-  currentHeaderMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
+  currentMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
 }
 
 watch(
-  () => currentHeaderMarginLeft.value,
+  () => currentMarginLeft.value,
   (newVal) => {
     if (boardsElement.value) {
       boardsElement.value.style.marginLeft = `${newVal}px`
@@ -96,7 +102,8 @@ const showNavMobile = () => {
   isNavMobileOpen.value = true
 }
 
-const openModalBoard = () => {
+const openModalBoard = (isEdit: boolean = false) => {
+  isBoardEdit.value = isEdit
   isCreateEditBoardOpen.value = true
 }
 

@@ -24,8 +24,8 @@ export const useBoardsStore = defineStore({
       this.setCurrentBoard(board.id)
     },
 
-    updateBoard(board: Board) {
-      const index = this.boardsData.findIndex((b) => b.id === board.id)
+    updateBoard(boardId: number, board: Board) {
+      const index = this.boardsData.findIndex((b) => b.id === boardId)
       this.boardsData[index] = board
     },
 
