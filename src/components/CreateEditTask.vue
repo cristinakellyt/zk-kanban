@@ -102,6 +102,7 @@ const props = defineProps<{
 }>()
 
 const boardsStore = useBoardsStore()
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const emit = defineEmits(['close'])
 
@@ -112,13 +113,8 @@ const subtasks = ref(props.subtasks ? props.subtasks : BOILERPLATE_SUBTASKS)
 const inputTaskName = ref(props.taskName ? props.taskName : '')
 const taskNameError = ref(false)
 const taskDescription = ref(props.description ? props.description : '')
-const taskStatusOptions = [
-  { id: 1, name: 'Todo' },
-  { id: 2, name: 'In progress' },
-  { id: 3, name: 'Done' }
-]
-const selectedStatus = ref(taskStatusOptions.find((status) => status.name === 'Todo'))
-const currentBoard = ref(boardsStore.getCurrentBoard)
+const taskStatusOptions = computed(() => boardsStore.getCurrentBoardColumns)
+const selectedStatus = ref(taskStatusOptions.value[0])
 
 const getTitle = computed(() => {
   return isEdit.value ? 'Edit task' : 'Add New Task'
@@ -157,7 +153,7 @@ const submitTask = () => {
 
   if (isEdit.value) {
     //test when it is ready
-    console.log('edit board')
+    console.log('edit task')
   } else {
     boardsStore.addTask(currentBoard.value.id, taskData)
   }

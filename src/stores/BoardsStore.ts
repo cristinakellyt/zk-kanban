@@ -16,6 +16,10 @@ export const useBoardsStore = defineStore({
 
     getCurrentBoard(): Board {
       return this.currentBoard
+    },
+
+    getCurrentBoardColumns(): { id: number; name: string }[] {
+      return this.currentBoard.columns
     }
   },
   actions: {
