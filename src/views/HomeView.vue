@@ -43,6 +43,16 @@
     <div class="boards" ref="boardsElement">
       <!-- Empty columns or boards -->
       <EmptyState v-if="checkEmptyState()" @addNewBoard="openModalBoard" :isEmpty="dataEmpty" />
+      <!-- Board -->
+      <Board
+        v-else
+        @addColumn="
+          () => {
+            isBoardEdit = true
+            isCreateEditBoardOpen = true
+          }
+        "
+      />
     </div>
   </main>
 </template>
@@ -59,6 +69,7 @@ import AnimationTransition from '@/components/animations/AnimationTransition.vue
 import CreateEditBoard from '@/components/CreateEditBoard.vue'
 import CreateEditTask from '@/components/CreateEditTask.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Board from '@/components/Board.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -138,6 +149,7 @@ if (appElement) {
 
 <style scoped lang="scss">
 @import '@/assets/scss/main.scss';
+
 $navbar-width: pxToRem(300);
 
 .nav-bar-desktop {
@@ -152,7 +164,8 @@ $navbar-width: pxToRem(300);
 .boards {
   background-color: var(--secondary-color);
   padding: pxToRem(32);
-  height: 100vh;
+  height: calc(100vh - pxToRem(64));
+  overflow: auto;
   transition: all 0.3s ease-in-out;
 }
 

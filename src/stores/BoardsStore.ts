@@ -18,7 +18,7 @@ export const useBoardsStore = defineStore({
       return this.currentBoard
     },
 
-    getCurrentBoardColumns(): { id: number; name: string }[] {
+    getCurrentBoardColumns(): { id: number; name: string; tasks: Task[] }[] {
       return this.currentBoard.columns
     }
   },
@@ -31,6 +31,7 @@ export const useBoardsStore = defineStore({
     updateBoard(boardId: number, board: Board) {
       const index = this.boardsData.findIndex((b) => b.id === boardId)
       this.boardsData[index] = board
+      this.setCurrentBoard(board.id)
     },
 
     removeBoard(boardId: number) {
@@ -38,15 +39,35 @@ export const useBoardsStore = defineStore({
       this.boardsData.splice(index, 1)
     },
 
-    addTask(boardId: number, task: Task) {
-      const index = this.boardsData.findIndex((b) => b.id === boardId)
-      this.boardsData[index].tasks.push(task)
+    addTask(boardId: number, columnId: number, task: Task) {
+      const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
+      const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === columnId)
+      this.boardsData[boardIndex].columns[columnIndex].tasks.push(task)
     },
 
     updateTask(boardId: number, task: Task) {
       const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
-      const taskIndex = this.boardsData[boardIndex].tasks.findIndex((t) => t.id === task.id)
-      this.boardsData[boardIndex].tasks[taskIndex] = task
+      const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === task.id)
+      const taskIndex = this.boardsData[boardIndex].columns[columnIndex].tasks.findIndex(
+        (t) => t.id === task.id
+      )
+      this.boardsData[boardIndex].columns[columnIndex].tasks[taskIndex] = task
+    },
+
+    updateTaskColumn(boardId: number, taskId: number, newColumnId: number, oldColumnId: number) {
+      const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
+      const newColumnIndex = this.boardsData[boardIndex].columns.findIndex(
+        (c) => c.id === newColumnId
+      )
+      const oldColumnIndex = this.boardsData[boardIndex].columns.findIndex(
+        (c) => c.id === oldColumnId
+      )
+      const taskIndex = this.boardsData[boardIndex].columns[oldColumnIndex].tasks.findIndex(
+        (t) => t.id === taskId
+      )
+      const task = this.boardsData[boardIndex].columns[oldColumnIndex].tasks.splice(taskIndex, 1)
+      //replace task to new column
+      this.boardsData[boardIndex].columns[newColumnIndex].tasks.push(task[0])
     },
 
     setCurrentBoard(boardId: number) {
