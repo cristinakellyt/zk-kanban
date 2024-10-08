@@ -71,7 +71,7 @@ import BaseButton from './BaseComponents/BaseButton.vue'
 import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
-import type { Board } from '@/types/appTypes'
+import type { Board, Task } from '@/types/appTypes'
 
 //TODO: Refactor this function to a helper file
 const generateNumericId = () => {
@@ -86,13 +86,15 @@ const boardsStore = useBoardsStore()
 
 const emit = defineEmits(['close'])
 
-const BOILERPLATE_COLUMNS = [{ id: generateNumericId(), name: 'To Do' }] as {
+const BOILERPLATE_COLUMNS = [{ id: generateNumericId(), name: 'To Do', tasks: [] }] as {
   id: number
   name: string
+  tasks: Task[]
 }[]
 
-const boards = computed(() => boardsStore.getBoardsData)
-const currentBoard = computed(() => boardsStore.getCurrentBoard)
+// use copies of the data to avoid reactivity issues
+const boards = computed(() => JSON.parse(JSON.stringify(boardsStore.getBoardsData)))
+const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
 const isEdit = ref(props.isEdit ? props.isEdit : false)
 const columns = ref(props.isEdit ? currentBoard.value.columns : BOILERPLATE_COLUMNS)
@@ -110,7 +112,7 @@ const updateBoardName = (value: string) => {
 }
 
 const addNewColumn = () => {
-  columns.value.push({ id: generateNumericId(), name: '' })
+  columns.value.push({ id: generateNumericId(), name: '', tasks: [] })
 }
 
 const deleteColumnInput = (id: number) => {
@@ -125,14 +127,11 @@ const submitBoard = () => {
   // Remove empty columns
   columns.value = columns.value.filter((column) => column.name !== '')
 
-  const boardData = JSON.parse(
-    JSON.stringify({
-      id: boardId.value,
-      boardName: boardName.value,
-      columns: columns.value,
-      tasks: []
-    })
-  ) as Board
+  const boardData = {
+    id: boardId.value,
+    boardName: boardName.value,
+    columns: columns.value
+  } as Board
 
   if (isEdit.value) {
     boardsStore.updateBoard(currentBoard.value.id, boardData)

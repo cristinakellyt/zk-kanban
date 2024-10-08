@@ -31,14 +31,14 @@
           />
 
           <fieldset>
-            <legend class="label" v-if="subtasks.length > 0">Subtasks</legend>
-            <div v-for="(subtask, index) in subtasks" :key="subtask.id" class="subtasks-input">
+            <legend class="label" v-if="subTasks.length > 0">Subtasks</legend>
+            <div v-for="(subtask, index) in subTasks" :key="subtask.id" class="subtasks-input">
               <BaseInput
                 type="text"
                 placeholder="e.g. Make coffee"
                 :fieldName="`column${subtask.id}`"
                 :input="subtask.name"
-                @inputChange="(value: string) => (subtasks[index].name = value)"
+                @inputChange="(value: string) => (subTasks[index].name = value)"
                 :isRequired="false"
               />
               <img
@@ -59,10 +59,10 @@
 
           <BaseDropdown
             id="taskStatus"
-            :dropdownOptions="taskStatusOptions"
-            :selectedOption="selectedStatus"
+            :dropdownOptions="taskColumnsOptions"
+            :selectedOption="selectedColumn"
             fieldTitle="Status"
-            @selectedValue="(option: any) => (selectedStatus = option)"
+            @selectedValue="(option: any) => (selectedColumn = option)"
             :isRequired="false"
           />
         </form>
@@ -102,19 +102,21 @@ const props = defineProps<{
 }>()
 
 const boardsStore = useBoardsStore()
-const currentBoard = computed(() => boardsStore.getCurrentBoard)
+
+// use copied board to avoid reactivity issues
+const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
 const emit = defineEmits(['close'])
 
 const BOILERPLATE_SUBTASKS = [{ id: generateNumericId(), name: '', isDone: false }] as SubTask[]
 
 const isEdit = ref(props.taskName ? true : false)
-const subtasks = ref(props.subtasks ? props.subtasks : BOILERPLATE_SUBTASKS)
+const subTasks = ref(props.subtasks ? props.subtasks : BOILERPLATE_SUBTASKS)
 const inputTaskName = ref(props.taskName ? props.taskName : '')
 const taskNameError = ref(false)
 const taskDescription = ref(props.description ? props.description : '')
-const taskStatusOptions = computed(() => boardsStore.getCurrentBoardColumns)
-const selectedStatus = ref(taskStatusOptions.value[0])
+const taskColumnsOptions = computed(() => boardsStore.getCurrentBoardColumns)
+const selectedColumn = ref(taskColumnsOptions.value[0])
 
 const getTitle = computed(() => {
   return isEdit.value ? 'Edit task' : 'Add New Task'
@@ -126,11 +128,11 @@ const updateTaskName = (value: string) => {
 }
 
 const addNewSubtask = () => {
-  subtasks.value.push({ id: generateNumericId(), name: '', isDone: false })
+  subTasks.value.push({ id: generateNumericId(), name: '', isDone: false })
 }
 
 const deleteSubtaskInput = (id: number) => {
-  subtasks.value = subtasks.value.filter((subtask) => subtask.id !== id)
+  subTasks.value = subTasks.value.filter((subtask) => subtask.id !== id)
 }
 
 const submitTask = () => {
@@ -139,23 +141,20 @@ const submitTask = () => {
   if (taskNameError.value) return
 
   // Remove empty columns
-  subtasks.value = subtasks.value.filter((subtask) => subtask.name !== '')
+  subTasks.value = subTasks.value.filter((subtask) => subtask.name !== '')
 
-  const taskData = JSON.parse(
-    JSON.stringify({
-      id: generateNumericId(),
-      title: inputTaskName.value,
-      description: taskDescription.value,
-      status: selectedStatus.value,
-      subtasks: subtasks.value
-    })
-  ) as Task
+  const taskData = {
+    id: generateNumericId(),
+    title: inputTaskName.value,
+    description: taskDescription.value,
+    subTasks: subTasks.value
+  } as Task
 
   if (isEdit.value) {
     //test when it is ready
     console.log('edit task')
   } else {
-    boardsStore.addTask(currentBoard.value.id, taskData)
+    boardsStore.addTask(currentBoard.value.id, selectedColumn.value.id, taskData)
   }
 
   emit('close')
