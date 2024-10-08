@@ -73,7 +73,6 @@ const header = ref<HTMLElement | null>(null)
 watch(
   () => props.headerMarginLeft,
   (newVal) => {
-    console.log(header.value)
     if (header.value) {
       header.value.style.marginLeft = pxToRem(newVal)
     }
