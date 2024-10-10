@@ -54,6 +54,26 @@ button {
   cursor: pointer;
 }
 
+//scroll
+::-webkit-scrollbar {
+  width: pxToRem(8);
+  height: pxToRem(12);
+  border-radius: pxToRem(5);
+  padding-left: pxToRem(10);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary-color-2);
+  border-radius: pxToRem(10);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color-light);
+  border-radius: pxToRem(10);
+}
+
+//media queries
+
 @media only screen and (min-width: 768px) {
   h1 {
     font-size: pxToRem(32);
