@@ -156,7 +156,7 @@ const selectOption = (option: { id: number; name: string }) => {
 
 .option-list {
   position: absolute;
-  top: pxToRem(75);
+  top: 105%;
   left: 0;
   width: 100%;
   background-color: var(--bg-color);
