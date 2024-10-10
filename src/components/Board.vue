@@ -22,8 +22,9 @@
             draggable="true"
             @dragstart="dragStart"
             @dragend="dragEnd"
+            @click="() => emit('openTask', task.id, column.id)"
           >
-            <h4>{{ task.title }}</h4>
+            <h4 class="task-title">{{ task.title }}</h4>
             <p v-if="task.subTasks.length" class="subtask">
               {{ checkDoneSubTasks(task.subTasks) }}
             </p>
@@ -50,7 +51,7 @@ import type { SubTask } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
 
-const emit = defineEmits(['addColumn'])
+const emit = defineEmits(['addColumn', 'openTask'])
 
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
@@ -153,6 +154,21 @@ $board-column-width-desktop: pxToRem(300);
     border-radius: pxToRem(5);
     margin-bottom: pxToRem(16);
     cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      box-shadow: 0 pxToRem(4) pxToRem(8) rgba(0, 0, 0, 0.1);
+
+      .task-title {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .task-title {
+    font-size: pxToRem(16);
+    font-weight: 600;
+    transition: all 0.3s;
   }
 
   .subtask {
