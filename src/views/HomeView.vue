@@ -52,8 +52,22 @@
             isCreateEditBoardOpen = true
           }
         "
+        @openTask="
+          (taskId, columnId) => {
+            isTaskDetailModalOpen = true
+            taskDetails = { taskId, columnId }
+          }
+        "
       />
     </div>
+    <!-- Task Details -->
+    <AnimationTransition>
+      <TaskDetailsModal
+        v-if="isTaskDetailModalOpen"
+        @close="isTaskDetailModalOpen = false"
+        :taskDetails="taskDetails"
+      />
+    </AnimationTransition>
   </main>
 </template>
 
@@ -70,6 +84,7 @@ import CreateEditBoard from '@/components/CreateEditBoard.vue'
 import CreateEditTask from '@/components/CreateEditTask.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Board from '@/components/Board.vue'
+import TaskDetailsModal from '@/components/TaskDetailsModal.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -91,6 +106,8 @@ const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
 const isCreateEditBoardOpen = ref(false)
 const isCreateEditTaskOpen = ref(false)
+const isTaskDetailModalOpen = ref(false)
+const taskDetails = ref()
 const dataEmpty = ref()
 const isBoardEdit = ref(false)
 const boardsElement = ref<HTMLElement | null>(null)

@@ -32,22 +32,24 @@
 
           <fieldset>
             <legend class="label" v-if="subTasks.length > 0">Subtasks</legend>
-            <div v-for="(subtask, index) in subTasks" :key="subtask.id" class="subtasks-input">
-              <BaseInput
-                type="text"
-                placeholder="e.g. Make coffee"
-                :fieldName="`column${subtask.id}`"
-                :input="subtask.name"
-                @inputChange="(value: string) => (subTasks[index].name = value)"
-                :isRequired="false"
-              />
-              <img
-                src="@/assets/icons/icon-cross.svg"
-                alt="delete-icon"
-                class="delete-icon"
-                @click="deleteSubtaskInput(subtask.id)"
-                :isRequired="false"
-              />
+            <div class="subtasks-input-wrapper">
+              <div v-for="(subtask, index) in subTasks" :key="subtask.id" class="subtasks-input">
+                <BaseInput
+                  type="text"
+                  placeholder="e.g. Make coffee"
+                  :fieldName="`column${subtask.id}`"
+                  :input="subtask.name"
+                  @inputChange="(value: string) => (subTasks[index].name = value)"
+                  :isRequired="false"
+                />
+                <img
+                  src="@/assets/icons/icon-cross.svg"
+                  alt="delete-icon"
+                  class="delete-icon"
+                  @click="deleteSubtaskInput(subtask.id)"
+                  :isRequired="false"
+                />
+              </div>
             </div>
             <BaseButton
               text="Add New Subtask"
@@ -180,7 +182,7 @@ const submitTask = () => {
   left: 50%;
   width: 80%;
   height: auto;
-  max-height: pxToRem(650);
+  max-height: pxToRem(750);
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -190,7 +192,7 @@ const submitTask = () => {
   border-radius: pxToRem(5);
   gap: pxToRem(16);
   padding: pxToRem(32) pxToRem(16);
-  overflow-y: scroll;
+  // overflow-y: scroll;
   z-index: 100;
 
   .task-title {
@@ -217,6 +219,7 @@ const submitTask = () => {
     gap: pxToRem(16);
     align-items: center;
     margin-bottom: pxToRem(10);
+    padding-right: pxToRem(16);
   }
 
   .delete-icon {
@@ -240,6 +243,12 @@ fieldset {
   border: none;
   padding: 0;
   margin: 0;
+}
+
+.subtasks-input-wrapper {
+  width: 100%;
+  max-height: pxToRem(200);
+  overflow: auto;
 }
 
 @include media-query($tablet) {

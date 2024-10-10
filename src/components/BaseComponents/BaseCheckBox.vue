@@ -10,12 +10,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const props = withDefaults(
   defineProps<{
     /**
      * The id of the checkbox
      */
-    id: string
+    id: number
     /**
      * The label text of the checkbox
      */
@@ -24,6 +26,10 @@ const props = withDefaults(
      * If the checkbox has a label
      */
     syncLabel?: boolean
+    /**
+     * The v-model of the checkbox
+     */
+    modelValue: boolean
   }>(),
   {
     syncLabel: true,
@@ -31,9 +37,11 @@ const props = withDefaults(
   }
 )
 
-const checkedVModel = defineModel('checkedVModel', {
-  type: Boolean,
-  default: false
+const emit = defineEmits(['update:modelValue'])
+
+const checkedVModel = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
 })
 </script>
 

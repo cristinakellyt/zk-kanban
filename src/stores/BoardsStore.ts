@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Board, Task } from '@/types/appTypes'
+import type { Board, Task, SubTask } from '@/types/appTypes'
 
 export const useBoardsStore = defineStore({
   id: 'BoardsStore',
@@ -73,6 +73,30 @@ export const useBoardsStore = defineStore({
     setCurrentBoard(boardId: number) {
       const index = this.boardsData.findIndex((b) => b.id === boardId)
       this.currentBoard = this.boardsData[index]
+    },
+
+    updateTaskDetail(
+      boardId: number,
+      taskId: number,
+      newSelectedColumnId: number,
+      oldColumnId: number,
+      subTasks: SubTask[]
+    ) {
+      //find current board index
+      const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
+      //find current column index
+      const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === oldColumnId)
+      //find current task index
+      const taskIndex = this.boardsData[boardIndex].columns[columnIndex].tasks.findIndex(
+        (t) => t.id === taskId
+      )
+      //update subtasks
+      this.boardsData[boardIndex].columns[columnIndex].tasks[taskIndex].subTasks = subTasks
+
+      //update task column
+      if (newSelectedColumnId !== oldColumnId) {
+        this.updateTaskColumn(boardId, taskId, newSelectedColumnId, oldColumnId)
+      }
     }
   }
 })
