@@ -23,13 +23,27 @@
           @click="emit('addNewTask')"
           :isDisabled="isAddTaskDisabled()"
         />
-        <div class="icon-options-wrapper">
+        <div class="options-wrapper" @click="isBoardOptionsOpen = true">
           <img
             src="@/assets/icons/icon-vertical-ellipsis.svg"
             alt="options-icon"
             class="icon-options"
           />
         </div>
+        <AnimationTransition>
+          <EditDeleteOptionsPopup
+            v-if="isBoardOptionsOpen"
+            :isBoard="true"
+            @close="isBoardOptionsOpen = false"
+            @editBoard="
+              () => {
+                console.log('edit board 1')
+                emit('openEditBoard')
+              }
+            "
+            @delete="emit('deleteBoard')"
+          />
+        </AnimationTransition>
       </div>
     </div>
   </header>
@@ -41,6 +55,8 @@ import { watch, ref, computed } from 'vue'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
+import AnimationTransition from '@/components/animations/AnimationTransition.vue'
+import EditDeleteOptionsPopup from '@/components/EditDeleteOptionsPopup.vue'
 
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -63,11 +79,27 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits(['openMobileNav', 'addNewTask'])
+const emit = defineEmits([
+  'openMobileNav',
+  'addNewTask',
+  'openBoardOptions',
+  'close',
+  'openEditBoard',
+  'deleteBoard'
+])
 
 const pxToRem = (px: number) => `${px / 16}rem`
 
 const header = ref<HTMLElement | null>(null)
+const isBoardOptionsOpen = ref(false)
+
+watch(
+  () => isBoardOptionsOpen.value,
+  (newVal) => {
+    console.log(newVal)
+  },
+  { immediate: true }
+)
 
 //watch props and adjust margin left in the header
 watch(
@@ -153,22 +185,71 @@ const isAddTaskDisabled = () => {
     align-items: center;
     gap: pxToRem(16);
     width: max-content;
+    position: relative;
 
     &:deep(.button-text) {
       display: none;
     }
 
-    .icon-options-wrapper {
+    .options-wrapper {
       cursor: pointer;
       height: 100%;
-      padding: 0 pxToRem(8);
+      // padding: 0 pxToRem(8);
+      // position: relative;
+      font-size: pxToRem(14);
+      font-weight: 500;
+      color: var(--text-color);
 
       .icon-options {
         width: pxToRem(14);
       }
+
+      // .board-options {
+      //   position: absolute;
+      //   top: 120%;
+      //   right: 0;
+      //   background-color: var(--bg-color);
+      //   border: pxToRem(1) solid var(--secondary-color);
+      //   box-shadow: pxToRem(2) pxToRem(2) pxToRem(5) rgba(0, 0, 0, 0.1);
+      //   border-radius: pxToRem(5);
+
+      //   display: flex;
+      //   flex-direction: column;
+      //   // gap: pxToRem(8);
+      //   justify-content: space-around;
+      //   width: pxToRem(200);
+      //   height: pxToRem(100);
+      //   z-index: 100;
+      //   color: var(--medium-grey);
+      //   font-weight: 600;
+
+      //   .option {
+      //     padding: pxToRem(8) pxToRem(16);
+      //     cursor: pointer;
+      //     transition: color 0.3s;
+
+      //     &:hover {
+      //       background-color: var(--secondary-color);
+      //     }
+
+      //     &.delete {
+      //       color: var(--red);
+      //     }
+      //   }
+      // }
     }
   }
 }
+
+// .backdrop {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-color: rgba(136, 41, 41, 0.5);
+//   z-index: 99;
+// }
 
 @include media-query($tablet) {
   .header-wrapper {
@@ -179,7 +260,7 @@ const isAddTaskDisabled = () => {
         display: block;
       }
 
-      .icon-options-wrapper {
+      .options-wrapper {
         .icon-options {
           width: pxToRem(12);
         }

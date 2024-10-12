@@ -101,8 +101,12 @@ const props = defineProps<{
   taskName?: string
   subtasks?: SubTask[]
   description?: string
+  isEdit?: boolean
+  taskId?: number
+  columnId?: number
 }>()
 
+// const { taskId, columnId } = props.taskDetails
 const boardsStore = useBoardsStore()
 
 // use copied board to avoid reactivity issues
@@ -112,13 +116,30 @@ const emit = defineEmits(['close'])
 
 const BOILERPLATE_SUBTASKS = [{ id: generateNumericId(), name: '', isDone: false }] as SubTask[]
 
-const isEdit = ref(props.taskName ? true : false)
-const subTasks = ref(props.subtasks ? props.subtasks : BOILERPLATE_SUBTASKS)
-const inputTaskName = ref(props.taskName ? props.taskName : '')
+const task = ref<Task | undefined>(undefined)
+
+if (props.taskId) {
+  task.value = currentBoard.value.columns
+    .map((column) => column.tasks)
+    .flat()
+    .find((task) => task.id === props.taskId)
+} else {
+  task.value = undefined
+}
+
+console.log(task.value)
+
+const currentColumn = ref(
+  currentBoard.value.columns.find((column) => column.id === props.columnId)
+  // columnId
+)
+const isEdit = ref(props.isEdit ? props.isEdit : false)
+const subTasks = ref(props.isEdit ? task.value?.subTasks : BOILERPLATE_SUBTASKS)
+const inputTaskName = ref(props.isEdit ? task.value?.title : '')
 const taskNameError = ref(false)
-const taskDescription = ref(props.description ? props.description : '')
+const taskDescription = ref(props.isEdit ? task.value?.description : '')
 const taskColumnsOptions = computed(() => boardsStore.getCurrentBoardColumns)
-const selectedColumn = ref(taskColumnsOptions.value[0])
+const selectedColumn = ref(props.isEdit ? currentColumn.value : taskColumnsOptions.value[0])
 
 const getTitle = computed(() => {
   return isEdit.value ? 'Edit task' : 'Add New Task'
@@ -127,6 +148,7 @@ const getTitle = computed(() => {
 const updateTaskName = (value: string) => {
   inputTaskName.value = value
   taskNameError.value = false
+  console.log(inputTaskName.value, 'updateTaskName')
 }
 
 const addNewSubtask = () => {
@@ -146,15 +168,23 @@ const submitTask = () => {
   subTasks.value = subTasks.value.filter((subtask) => subtask.name !== '')
 
   const taskData = {
-    id: generateNumericId(),
+    id: isEdit.value ? task.value?.id : generateNumericId(),
     title: inputTaskName.value,
     description: taskDescription.value,
     subTasks: subTasks.value
   } as Task
 
+  console.log(taskData, 'taskData')
+
   if (isEdit.value) {
     //test when it is ready
     console.log('edit task')
+    boardsStore.editTask(
+      currentBoard.value.id,
+      selectedColumn.value.id,
+      currentColumn.value.id,
+      taskData
+    )
   } else {
     boardsStore.addTask(currentBoard.value.id, selectedColumn.value.id, taskData)
   }

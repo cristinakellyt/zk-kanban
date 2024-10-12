@@ -7,10 +7,32 @@
         <h3 class="task-title">{{ task.title }}</h3>
         <img
           src="@/assets/icons/icon-vertical-ellipsis.svg"
-          alt="close-icon"
-          class="close-icon"
-          @click="emit('close')"
+          alt="option-icon"
+          class="option-icon"
+          @click="isBoardOptionsOpen = true"
         />
+
+        <!-- Options Pop up -->
+        <AnimationTransition>
+          <EditDeleteOptionsPopup
+            v-if="isBoardOptionsOpen"
+            :isBoard="false"
+            @close="isBoardOptionsOpen = false"
+            @editTask="
+              () => {
+                console.log('edit board 1')
+                emit('close')
+                emit('openEditTask')
+              }
+            "
+            @delete="
+              () => {
+                emit('deleteTask')
+                emit('close')
+              }
+            "
+          />
+        </AnimationTransition>
       </div>
       <p class="description">{{ task.description }}</p>
 
@@ -37,10 +59,15 @@
 </template>
 
 <script setup lang="ts">
+// Vue
 import { computed, ref } from 'vue'
+
+// Components
 import BaseButton from './BaseComponents/BaseButton.vue'
 import BaseCheckBox from './BaseComponents/BaseCheckBox.vue'
 import BaseDropdown from './BaseComponents/BaseDropdown.vue'
+import EditDeleteOptionsPopup from '@/components/EditDeleteOptionsPopup.vue'
+import AnimationTransition from '@/components/animations/AnimationTransition.vue'
 
 // Store
 import { useBoardsStore } from '@/stores/BoardsStore'
@@ -50,7 +77,7 @@ import type { SubTask, Task, Board } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'openEditTask', 'deleteTask'])
 
 const props = defineProps<{
   taskDetails: { taskId: number; columnId: number }
@@ -85,6 +112,8 @@ const getSubtaskTitle = computed(() => {
   const subtasksDone = task.value.subTasks.filter((subtask) => subtask.isDone).length
   return `Subtasks (${subtasksDone} of ${task.value.subTasks.length})`
 })
+
+const isBoardOptionsOpen = ref(false)
 
 const saveTaskDetail = () => {
   boardsStore.updateTaskDetail(
@@ -135,11 +164,17 @@ const saveTaskDetail = () => {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    position: relative;
   }
 
   .task-title {
     font-weight: 600;
     color: var(--text-color);
+  }
+
+  .option-icon {
+    cursor: pointer;
+    padding: 0 pxToRem(8);
   }
 
   .description {

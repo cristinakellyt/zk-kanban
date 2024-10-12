@@ -97,6 +97,32 @@ export const useBoardsStore = defineStore({
       if (newSelectedColumnId !== oldColumnId) {
         this.updateTaskColumn(boardId, taskId, newSelectedColumnId, oldColumnId)
       }
+    },
+
+    editTask(boardId: number, newColumnId: number, oldColumnId: number, task: Task) {
+      console.log(task, 'from store')
+
+      const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
+      const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === oldColumnId)
+      const taskIndex = this.boardsData[boardIndex].columns[columnIndex].tasks.findIndex(
+        (t) => t.id === task.id
+      )
+      this.boardsData[boardIndex].columns[columnIndex].tasks[taskIndex] = task
+
+      if (newColumnId !== oldColumnId) {
+        this.updateTaskColumn(boardId, task.id, newColumnId, oldColumnId)
+      }
+    },
+
+    deleteBoard(boardId: number) {
+      const index = this.boardsData.findIndex((b) => b.id === boardId)
+      this.boardsData.splice(index, 1)
+
+      if (this.boardsData.length > 0) {
+        this.currentBoard = this.boardsData[0] as Board
+      } else {
+        this.currentBoard = {} as Board
+      }
     }
   }
 })

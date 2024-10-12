@@ -23,7 +23,25 @@
       :headerMarginLeft="currentMarginLeft"
       :imgLogo="getResponsiveLogo"
       @openMobileNav="showNavMobile"
-      @addNewTask="isCreateEditTaskOpen = true"
+      @addNewTask="
+        () => {
+          isCreateEditTaskOpen = true
+          isTaskEdit = false
+        }
+      "
+      @openEditBoard="
+        () => {
+          isBoardEdit = true
+          isCreateEditBoardOpen = true
+          console.log('edit board')
+        }
+      "
+      @deleteBoard="
+        () => {
+          isDeleteModalOpen = true
+          deleteTask = false
+        }
+      "
     />
 
     <!-- Create/Edit new board -->
@@ -37,7 +55,13 @@
 
     <!-- Create/Edit task -->
     <AnimationTransition>
-      <CreateEditTask v-if="isCreateEditTaskOpen" @close="isCreateEditTaskOpen = false" />
+      <CreateEditTask
+        v-if="isCreateEditTaskOpen"
+        @close="isCreateEditTaskOpen = false"
+        :isEdit="isTaskEdit"
+        :taskId="taskDetails?.taskId"
+        :columnId="taskDetails?.columnId"
+      />
     </AnimationTransition>
 
     <div class="boards" ref="boardsElement">
@@ -66,6 +90,28 @@
         v-if="isTaskDetailModalOpen"
         @close="isTaskDetailModalOpen = false"
         :taskDetails="taskDetails"
+        @openEditTask="
+          () => {
+            isCreateEditTaskOpen = true
+            isTaskEdit = true
+          }
+        "
+        @deleteTask="
+          () => {
+            isDeleteModalOpen = true
+            deleteTask = true
+          }
+        "
+      />
+    </AnimationTransition>
+
+    <!-- Delete Modal -->
+    <AnimationTransition>
+      <DeleteModal
+        v-if="isDeleteModalOpen"
+        @close="isDeleteModalOpen = false"
+        :isTask="deleteTask"
+        :taskDetails="taskDetails"
       />
     </AnimationTransition>
   </main>
@@ -85,6 +131,7 @@ import CreateEditTask from '@/components/CreateEditTask.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Board from '@/components/Board.vue'
 import TaskDetailsModal from '@/components/TaskDetailsModal.vue'
+import DeleteModal from '@/components/DeleteModal.vue'
 
 //Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -111,6 +158,9 @@ const taskDetails = ref()
 const dataEmpty = ref()
 const isBoardEdit = ref(false)
 const boardsElement = ref<HTMLElement | null>(null)
+const isTaskEdit = ref(false)
+const isDeleteModalOpen = ref(false)
+const deleteTask = ref(false)
 
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
   currentMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
