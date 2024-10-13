@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
-import type { Board, Task, SubTask } from '@/types/appTypes'
+import type { Board, Task, Column } from '@/types/appTypes'
+
+const STORAGE_KEY = 'boardsData'
+const CURRENT_BOARD_KEY = 'currentBoard'
 
 export const useBoardsStore = defineStore({
   id: 'BoardsStore',
   state: () => {
     return {
-      boardsData: [] as Board[],
-      currentBoard: {} as Board,
+      boardsData: JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as Board[],
+      currentBoard: JSON.parse(localStorage.getItem(CURRENT_BOARD_KEY) || '{}') as Board,
       currentTask: {} as Task
     }
   },
@@ -19,25 +22,33 @@ export const useBoardsStore = defineStore({
       return this.currentBoard
     },
 
-    getCurrentBoardColumns(): { id: number; name: string; tasks: Task[] }[] {
+    getCurrentBoardColumns(): Column[] {
       return this.currentBoard.columns
     }
   },
   actions: {
+    saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.boardsData))
+      localStorage.setItem(CURRENT_BOARD_KEY, JSON.stringify(this.currentBoard))
+    },
+
     addBoard(board: Board) {
       this.boardsData.push(board)
       this.setCurrentBoard(board.id)
+      this.saveToLocalStorage()
     },
 
     updateBoard(boardId: number, board: Board) {
       const index = this.boardsData.findIndex((b) => b.id === boardId)
       this.boardsData[index] = board
       this.setCurrentBoard(board.id)
+      this.saveToLocalStorage()
     },
 
     removeBoard(boardId: number) {
       const index = this.boardsData.findIndex((b) => b.id === boardId)
       this.boardsData.splice(index, 1)
+      this.saveToLocalStorage()
     },
 
     setCurrentBoard(boardId: number) {
@@ -54,12 +65,14 @@ export const useBoardsStore = defineStore({
       } else {
         this.currentBoard = {} as Board
       }
+      this.saveToLocalStorage()
     },
 
     addTask(boardId: number, columnId: number, task: Task) {
       const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
       const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === columnId)
       this.boardsData[boardIndex].columns[columnIndex].tasks.push(task)
+      this.saveToLocalStorage()
     },
 
     updateTaskColumn(boardId: number, taskId: number, newColumnId: number, oldColumnId: number) {
@@ -76,6 +89,7 @@ export const useBoardsStore = defineStore({
       const task = this.boardsData[boardIndex].columns[oldColumnIndex].tasks.splice(taskIndex, 1)
       //replace task to new column
       this.boardsData[boardIndex].columns[newColumnIndex].tasks.push(task[0])
+      this.saveToLocalStorage()
     },
 
     editTask(boardId: number, newColumnId: number, oldColumnId: number, task: Task) {
@@ -89,6 +103,7 @@ export const useBoardsStore = defineStore({
       if (newColumnId !== oldColumnId) {
         this.updateTaskColumn(boardId, task.id, newColumnId, oldColumnId)
       }
+      this.saveToLocalStorage()
     },
 
     deleteTask(boardId: number, columnId: number, taskId: number) {
@@ -98,6 +113,7 @@ export const useBoardsStore = defineStore({
         (t) => t.id === taskId
       )
       this.boardsData[boardIndex].columns[columnIndex].tasks.splice(taskIndex, 1)
+      this.saveToLocalStorage()
     }
   }
 })

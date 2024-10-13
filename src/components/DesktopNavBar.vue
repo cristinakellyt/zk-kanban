@@ -81,8 +81,8 @@ const props = withDefaults(
   }
 )
 
-const boards = computed(() => boardsStore.getBoardsData)
-const currentBoard = computed(() => boardsStore.getCurrentBoard)
+const boards = computed(() => JSON.parse(JSON.stringify(boardsStore.getBoardsData)))
+const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
 const showNavBar = ref(true)
 
