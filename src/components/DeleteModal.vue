@@ -44,12 +44,12 @@ const getTextWarn = computed(() => {
 })
 
 const onDelete = () => {
-  emit('close')
   if (props.isTask) {
     boardsStore.deleteTask(currentBoard.value.id, props.columnId, props.task.id)
   } else {
     boardsStore.deleteBoard(currentBoard.value.id)
   }
+  emit('close')
 }
 </script>
 

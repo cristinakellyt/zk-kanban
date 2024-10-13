@@ -32,7 +32,7 @@
     <div class="boards" ref="boardsElement">
       <!-- Empty columns or boards -->
       <EmptyState
-        v-if="checkEmptyState()"
+        v-if="isEmptyState()"
         :emptyStateType="typeDataEmpty"
         @addNewBoard="openModalBoard"
         @addNewColumn="onAddColumn"
@@ -83,7 +83,7 @@
       <DeleteModal
         v-if="isDeleteModalOpen"
         :isTask="deleteTask"
-        ::task="taskDetails"
+        :task="taskDetails"
         :columnId="currentColumnTaskId"
         @close="isDeleteModalOpen = false"
       />
@@ -223,7 +223,7 @@ const openTaskDetailsModal = (task: Task, columnId: number) => {
 }
 
 ///// Data functions
-const checkEmptyState = () => {
+const isEmptyState = () => {
   if (boards.value.length === 0) {
     typeDataEmpty.value = 'board'
     return true
@@ -231,7 +231,7 @@ const checkEmptyState = () => {
     typeDataEmpty.value = 'column'
     return currentBoard.value.columns.length === 0
   } else {
-    return true
+    return false
   }
 }
 </script>
