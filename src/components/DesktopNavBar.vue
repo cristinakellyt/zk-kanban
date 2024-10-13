@@ -69,10 +69,8 @@ import imgLogoDark from '@/assets/icons/logo-dark.svg'
 //store
 import { useBoardsStore } from '@/stores/BoardsStore'
 
+const emit = defineEmits(['addNewBoard', 'isNavBarVisible'])
 const boardsStore = useBoardsStore()
-
-const boards = computed(() => boardsStore.getBoardsData)
-const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const props = withDefaults(
   defineProps<{
@@ -83,7 +81,8 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits(['addNewBoard', 'isNavBarVisible'])
+const boards = computed(() => boardsStore.getBoardsData)
+const currentBoard = computed(() => boardsStore.getCurrentBoard)
 
 const showNavBar = ref(true)
 
@@ -159,7 +158,6 @@ $sidebar-width: pxToRem(300);
           background-color: var(--primary-color);
           .board-icon,
           .board-name {
-            // color: $white;
             filter: brightness(10);
           }
         }

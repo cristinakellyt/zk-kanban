@@ -2,7 +2,7 @@
   <header ref="header" class="header-wrapper">
     <!-- Logo -->
     <div class="logo-wrapper">
-      <img class="logo-desktop" alt="kanban-logo" :src="imgLogo" v-if="headerMarginLeft === 0" />
+      <img v-if="headerMarginLeft === 0" class="logo-desktop" alt="kanban-logo" :src="imgLogo" />
       <img class="logo-mobile" alt="kanban-logo" src="@/assets/icons/logo-mobile.svg" />
     </div>
     <!-- Board title -->
@@ -17,30 +17,32 @@
       </h1>
       <!-- Header options -->
       <div class="header-options">
+        <!-- Add new task -->
         <BaseButton
           text="Add new task"
           icon="src/assets/icons/icon-add-white.svg"
+          :isDisabled="isBoardOptionsDisabled()"
           @click="emit('addNewTask')"
-          :isDisabled="isAddTaskDisabled()"
         />
-        <div class="options-wrapper" @click="isBoardOptionsOpen = true">
+        <div
+          class="options-wrapper"
+          :class="{ disabled: isBoardOptionsDisabled() }"
+          @click="isBoardOptionsDisabled() ? null : (isBoardOptionsOpen = !isBoardOptionsOpen)"
+        >
           <img
             src="@/assets/icons/icon-vertical-ellipsis.svg"
             alt="options-icon"
             class="icon-options"
           />
         </div>
+
+        <!-- Edit/Delete board -->
         <AnimationTransition>
           <EditDeleteOptionsPopup
             v-if="isBoardOptionsOpen"
             :isBoard="true"
             @close="isBoardOptionsOpen = false"
-            @editBoard="
-              () => {
-                console.log('edit board 1')
-                emit('openEditBoard')
-              }
-            "
+            @editBoard="emit('openEditBoard')"
             @delete="emit('deleteBoard')"
           />
         </AnimationTransition>
@@ -79,27 +81,12 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits([
-  'openMobileNav',
-  'addNewTask',
-  'openBoardOptions',
-  'close',
-  'openEditBoard',
-  'deleteBoard'
-])
+const emit = defineEmits(['openMobileNav', 'addNewTask', 'close', 'openEditBoard', 'deleteBoard'])
 
 const pxToRem = (px: number) => `${px / 16}rem`
 
 const header = ref<HTMLElement | null>(null)
 const isBoardOptionsOpen = ref(false)
-
-watch(
-  () => isBoardOptionsOpen.value,
-  (newVal) => {
-    console.log(newVal)
-  },
-  { immediate: true }
-)
 
 //watch props and adjust margin left in the header
 watch(
@@ -119,7 +106,7 @@ const openMobileNav = () => {
   emit('openMobileNav')
 }
 
-const isAddTaskDisabled = () => {
+const isBoardOptionsDisabled = () => {
   // Check if the current board has columns, if not, disable the button
   if ('columns' in currentBoard.value) {
     return currentBoard.value.columns.length === 0
@@ -194,8 +181,6 @@ const isAddTaskDisabled = () => {
     .options-wrapper {
       cursor: pointer;
       height: 100%;
-      // padding: 0 pxToRem(8);
-      // position: relative;
       font-size: pxToRem(14);
       font-weight: 500;
       color: var(--text-color);
@@ -204,52 +189,13 @@ const isAddTaskDisabled = () => {
         width: pxToRem(14);
       }
 
-      // .board-options {
-      //   position: absolute;
-      //   top: 120%;
-      //   right: 0;
-      //   background-color: var(--bg-color);
-      //   border: pxToRem(1) solid var(--secondary-color);
-      //   box-shadow: pxToRem(2) pxToRem(2) pxToRem(5) rgba(0, 0, 0, 0.1);
-      //   border-radius: pxToRem(5);
-
-      //   display: flex;
-      //   flex-direction: column;
-      //   // gap: pxToRem(8);
-      //   justify-content: space-around;
-      //   width: pxToRem(200);
-      //   height: pxToRem(100);
-      //   z-index: 100;
-      //   color: var(--medium-grey);
-      //   font-weight: 600;
-
-      //   .option {
-      //     padding: pxToRem(8) pxToRem(16);
-      //     cursor: pointer;
-      //     transition: color 0.3s;
-
-      //     &:hover {
-      //       background-color: var(--secondary-color);
-      //     }
-
-      //     &.delete {
-      //       color: var(--red);
-      //     }
-      //   }
-      // }
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
     }
   }
 }
-
-// .backdrop {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   background-color: rgba(136, 41, 41, 0.5);
-//   z-index: 99;
-// }
 
 @include media-query($tablet) {
   .header-wrapper {

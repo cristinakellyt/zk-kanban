@@ -8,6 +8,7 @@
       </div>
       <div class="board-content">
         <form id="boardForm" class="board-form" @submit.prevent="submitBoard">
+          <!-- Board Name -->
           <BaseInput
             type="text"
             placeholder="e.g. Web Design"
@@ -19,6 +20,7 @@
             textError="Can't be empty"
             :isRequired="false"
           />
+          <!-- Board Columns -->
           <fieldset>
             <legend class="label" v-if="columns.length > 0">Columns</legend>
             <div v-for="(column, index) in columns" :key="column.id" class="columns-input">
@@ -41,7 +43,7 @@
           </fieldset>
         </form>
       </div>
-
+      <!-- Buttons -->
       <div class="buttons-options">
         <BaseButton
           text="Add New Column"
@@ -71,39 +73,31 @@ import BaseButton from './BaseComponents/BaseButton.vue'
 import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
-import type { Board, Task } from '@/types/appTypes'
+import type { Board, Column } from '@/types/appTypes'
 
-//TODO: Refactor this function to a helper file
-const generateNumericId = () => {
-  return Math.floor(Math.random() * 1000000)
-}
+//Helpers
+import generateNumericId from '@/utils/generateNumericId'
 
-const props = defineProps<{
-  isEdit?: boolean
-}>()
-
-const boardsStore = useBoardsStore()
+// Data
+import { BOILERPLATE_COLUMNS } from '@/constants/boilerplateContent'
 
 const emit = defineEmits(['close'])
+const boardsStore = useBoardsStore()
 
-const BOILERPLATE_COLUMNS = [{ id: generateNumericId(), name: 'To Do', tasks: [] }] as {
-  id: number
-  name: string
-  tasks: Task[]
-}[]
+const props = defineProps<{
+  isEdit: boolean
+}>()
 
-// use copies of the data to avoid reactivity issues
-const boards = computed(() => JSON.parse(JSON.stringify(boardsStore.getBoardsData)))
+// use copy of the data to avoid reactivity issues
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
-const isEdit = ref(props.isEdit ? props.isEdit : false)
+const boardId = ref(props.isEdit ? currentBoard.value.id : generateNumericId())
 const columns = ref(props.isEdit ? currentBoard.value.columns : BOILERPLATE_COLUMNS)
 const boardName = ref(props.isEdit ? currentBoard.value.boardName : '')
 const boardNameError = ref(false)
-const boardId = ref(props.isEdit ? currentBoard.value.id : generateNumericId())
 
 const getTitle = computed(() => {
-  return isEdit.value ? 'Edit board' : 'Add New Board'
+  return props.isEdit ? 'Edit board' : 'Add New Board'
 })
 
 const updateBoardName = (value: string) => {
@@ -116,7 +110,7 @@ const addNewColumn = () => {
 }
 
 const deleteColumnInput = (id: number) => {
-  columns.value = columns.value.filter((column) => column.id !== id)
+  columns.value = columns.value.filter((column: Column) => column.id !== id)
 }
 
 const submitBoard = () => {
@@ -125,7 +119,7 @@ const submitBoard = () => {
   if (boardNameError.value) return
 
   // Remove empty columns
-  columns.value = columns.value.filter((column) => column.name !== '')
+  columns.value = columns.value.filter((column: Column) => column.name !== '')
 
   const boardData = {
     id: boardId.value,
@@ -133,7 +127,7 @@ const submitBoard = () => {
     columns: columns.value
   } as Board
 
-  if (isEdit.value) {
+  if (props.isEdit) {
     boardsStore.updateBoard(currentBoard.value.id, boardData)
   } else {
     boardsStore.addBoard(boardData)

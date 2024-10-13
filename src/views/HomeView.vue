@@ -10,9 +10,9 @@
     <!-- Mobile navbar -->
     <AnimationTransition name="fade" group>
       <MobileNavBar
-        class="nav-bar-mobile"
         v-if="isNavMobileOpen"
-        @close="() => (isNavMobileOpen = false)"
+        class="nav-bar-mobile"
+        @close="isNavMobileOpen = false"
         @addNewBoard="openModalBoard"
       />
     </AnimationTransition>
@@ -23,33 +23,35 @@
       :headerMarginLeft="currentMarginLeft"
       :imgLogo="getResponsiveLogo"
       @openMobileNav="showNavMobile"
-      @addNewTask="
-        () => {
-          isCreateEditTaskOpen = true
-          isTaskEdit = false
-        }
-      "
-      @openEditBoard="
-        () => {
-          isBoardEdit = true
-          isCreateEditBoardOpen = true
-          console.log('edit board')
-        }
-      "
-      @deleteBoard="
-        () => {
-          isDeleteModalOpen = true
-          deleteTask = false
-        }
-      "
+      @addNewTask="onAddNewTask"
+      @openEditBoard="onEditBoard"
+      @deleteBoard="onDeleteBoard"
     />
+
+    <!-- Board -->
+    <div class="boards" ref="boardsElement">
+      <!-- Empty columns or boards -->
+      <EmptyState
+        v-if="checkEmptyState()"
+        :emptyStateType="typeDataEmpty"
+        @addNewBoard="openModalBoard"
+        @addNewColumn="onAddColumn"
+      />
+      <Board
+        v-else
+        @addColumn="onAddColumn"
+        @openTask="(task, columnId) => openTaskDetailsModal(task, columnId)"
+      />
+    </div>
+
+    <!-- MODALS -->
 
     <!-- Create/Edit new board -->
     <AnimationTransition>
       <CreateEditBoard
         v-if="isCreateEditBoardOpen"
-        @close="isCreateEditBoardOpen = false"
         :isEdit="isBoardEdit"
+        @close="isCreateEditBoardOpen = false"
       />
     </AnimationTransition>
 
@@ -57,51 +59,22 @@
     <AnimationTransition>
       <CreateEditTask
         v-if="isCreateEditTaskOpen"
-        @close="isCreateEditTaskOpen = false"
         :isEdit="isTaskEdit"
-        :taskId="taskDetails?.taskId"
-        :columnId="taskDetails?.columnId"
+        :task="taskDetails"
+        :columnId="currentColumnTaskId"
+        @close="isCreateEditTaskOpen = false"
       />
     </AnimationTransition>
 
-    <div class="boards" ref="boardsElement">
-      <!-- Empty columns or boards -->
-      <EmptyState v-if="checkEmptyState()" @addNewBoard="openModalBoard" :isEmpty="dataEmpty" />
-      <!-- Board -->
-      <Board
-        v-else
-        @addColumn="
-          () => {
-            isBoardEdit = true
-            isCreateEditBoardOpen = true
-          }
-        "
-        @openTask="
-          (taskId, columnId) => {
-            isTaskDetailModalOpen = true
-            taskDetails = { taskId, columnId }
-          }
-        "
-      />
-    </div>
     <!-- Task Details -->
     <AnimationTransition>
       <TaskDetailsModal
         v-if="isTaskDetailModalOpen"
+        :task="taskDetails"
+        :columnId="currentColumnTaskId"
         @close="isTaskDetailModalOpen = false"
-        :taskDetails="taskDetails"
-        @openEditTask="
-          () => {
-            isCreateEditTaskOpen = true
-            isTaskEdit = true
-          }
-        "
-        @deleteTask="
-          () => {
-            isDeleteModalOpen = true
-            deleteTask = true
-          }
-        "
+        @openEditTask="onEditTask"
+        @deleteTask="onDeleteTask"
       />
     </AnimationTransition>
 
@@ -109,9 +82,10 @@
     <AnimationTransition>
       <DeleteModal
         v-if="isDeleteModalOpen"
-        @close="isDeleteModalOpen = false"
         :isTask="deleteTask"
-        :taskDetails="taskDetails"
+        ::task="taskDetails"
+        :columnId="currentColumnTaskId"
+        @close="isDeleteModalOpen = false"
       />
     </AnimationTransition>
   </main>
@@ -140,28 +114,38 @@ import imgLogoLight from '@/assets/icons/logo-light.svg'
 // Store
 import { useBoardsStore } from '@/stores/BoardsStore'
 
-const MARGIN_LEFT = 300
-const MARGIN_LEFT_ZERO = 0
+// Types
+import type { Task } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
-const boards = computed(() => boardsStore.getBoardsData)
-const currentBoard = computed(() => boardsStore.getCurrentBoard)
+const boards = computed(() => JSON.parse(JSON.stringify(boardsStore.getBoardsData)))
+const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
+//Style and design variables
+const MARGIN_LEFT = 300
+const MARGIN_LEFT_ZERO = 0
 const currentMarginLeft = ref(MARGIN_LEFT)
 const getResponsiveLogo = ref(imgLogoDark)
 const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
+
+// Modals variables
 const isCreateEditBoardOpen = ref(false)
 const isCreateEditTaskOpen = ref(false)
 const isTaskDetailModalOpen = ref(false)
-const taskDetails = ref()
-const dataEmpty = ref()
-const isBoardEdit = ref(false)
-const boardsElement = ref<HTMLElement | null>(null)
-const isTaskEdit = ref(false)
 const isDeleteModalOpen = ref(false)
+
+const isBoardEdit = ref(false)
+const isTaskEdit = ref(false)
 const deleteTask = ref(false)
 
+// Data variables
+const taskDetails = ref()
+const currentColumnTaskId = ref<number>()
+const typeDataEmpty = ref<'column' | 'board'>()
+const boardsElement = ref<HTMLElement | null>(null)
+
+///// Style and design functions
 const adjustHeaderWidth = (navDesktopIsVisible: boolean) => {
   currentMarginLeft.value = navDesktopIsVisible ? MARGIN_LEFT : MARGIN_LEFT_ZERO
 }
@@ -175,27 +159,6 @@ watch(
   },
   { immediate: true }
 )
-
-const showNavMobile = () => {
-  isNavMobileOpen.value = true
-}
-
-const openModalBoard = (isEdit: boolean = false) => {
-  isBoardEdit.value = isEdit
-  isCreateEditBoardOpen.value = true
-}
-
-const checkEmptyState = () => {
-  if (boards.value.length === 0) {
-    dataEmpty.value = 'board'
-    return true
-  } else if ('columns' in currentBoard.value) {
-    dataEmpty.value = 'column'
-    return currentBoard.value.columns.length === 0
-  } else {
-    return true
-  }
-}
 
 // Create a mutation observer to change the logo when the color theme changes
 const observer = new MutationObserver((mutationsList) => {
@@ -211,6 +174,65 @@ const observer = new MutationObserver((mutationsList) => {
 // Start observing the 'app' element for class attribute changes
 if (appElement) {
   observer.observe(appElement, { attributes: true })
+}
+
+const showNavMobile = () => {
+  isNavMobileOpen.value = true
+}
+
+///// Modals functions
+const openModalBoard = () => {
+  isBoardEdit.value = false
+  isCreateEditBoardOpen.value = true
+}
+
+const onEditBoard = () => {
+  isBoardEdit.value = true
+  isCreateEditBoardOpen.value = true
+}
+
+const onDeleteBoard = () => {
+  isDeleteModalOpen.value = true
+  deleteTask.value = false
+}
+
+const onEditTask = () => {
+  isTaskEdit.value = true
+  isCreateEditTaskOpen.value = true
+}
+
+const onDeleteTask = () => {
+  isDeleteModalOpen.value = true
+  deleteTask.value = true
+}
+
+const onAddNewTask = () => {
+  isTaskEdit.value = false
+  isCreateEditTaskOpen.value = true
+}
+
+const onAddColumn = () => {
+  isBoardEdit.value = true
+  isCreateEditBoardOpen.value = true
+}
+
+const openTaskDetailsModal = (task: Task, columnId: number) => {
+  taskDetails.value = task
+  currentColumnTaskId.value = columnId
+  isTaskDetailModalOpen.value = true
+}
+
+///// Data functions
+const checkEmptyState = () => {
+  if (boards.value.length === 0) {
+    typeDataEmpty.value = 'board'
+    return true
+  } else if ('columns' in currentBoard.value) {
+    typeDataEmpty.value = 'column'
+    return currentBoard.value.columns.length === 0
+  } else {
+    return true
+  }
 }
 </script>
 

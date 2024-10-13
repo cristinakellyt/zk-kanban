@@ -20,9 +20,8 @@
             @close="isBoardOptionsOpen = false"
             @editTask="
               () => {
-                console.log('edit board 1')
-                emit('close')
                 emit('openEditTask')
+                emit('close')
               }
             "
             @delete="
@@ -73,31 +72,22 @@ import AnimationTransition from '@/components/animations/AnimationTransition.vue
 import { useBoardsStore } from '@/stores/BoardsStore'
 
 // Types
-import type { SubTask, Task, Board } from '@/types/appTypes'
+import type { Task, Column } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
 
 const emit = defineEmits(['close', 'openEditTask', 'deleteTask'])
 
 const props = defineProps<{
-  taskDetails: { taskId: number; columnId: number }
+  task: Task
+  columnId: number
 }>()
 
-//destructuring props
-const { taskId, columnId } = props.taskDetails
-
+const isBoardOptionsOpen = ref(false)
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
-const task = ref<Task>(
-  currentBoard.value.columns
-    .map((column) => column.tasks)
-    .flat()
-    .find((task) => task.id === taskId)
-)
-
 const currentColumn = ref(
-  currentBoard.value.columns.find((column) => column.id === columnId)
-  // columnId
+  currentBoard.value.columns.find((column: Column) => column.id === props.columnId)
 )
 
 const taskColumnsOptions = computed(() =>
@@ -105,24 +95,16 @@ const taskColumnsOptions = computed(() =>
 )
 
 const selectedColumn = ref(
-  taskColumnsOptions.value.find((column) => column.id === currentColumn.value.id)
+  taskColumnsOptions.value.find((column: Column) => column.id === currentColumn.value.id)
 )
 
 const getSubtaskTitle = computed(() => {
-  const subtasksDone = task.value.subTasks.filter((subtask) => subtask.isDone).length
-  return `Subtasks (${subtasksDone} of ${task.value.subTasks.length})`
+  const subtasksDone = props.task.subTasks.filter((subtask) => subtask.isDone).length
+  return `Subtasks (${subtasksDone} of ${props.task.subTasks.length})`
 })
 
-const isBoardOptionsOpen = ref(false)
-
 const saveTaskDetail = () => {
-  boardsStore.updateTaskDetail(
-    currentBoard.value.id,
-    task.value.id,
-    selectedColumn.value.id,
-    columnId,
-    task.value.subTasks
-  )
+  boardsStore.editTask(currentBoard.value.id, selectedColumn.value.id, props.columnId, props.task)
   emit('close')
 }
 </script>
@@ -156,7 +138,6 @@ const saveTaskDetail = () => {
   border-radius: pxToRem(5);
   gap: pxToRem(16);
   padding: pxToRem(16);
-  // overflow-y: auto;
   z-index: 100;
 
   .task-header {

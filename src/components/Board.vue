@@ -22,11 +22,11 @@
             draggable="true"
             @dragstart="dragStart"
             @dragend="dragEnd"
-            @click="() => emit('openTask', task.id, column.id)"
+            @click="() => emit('openTask', task, column.id)"
           >
             <h4 class="task-title">{{ task.title }}</h4>
             <p v-if="task.subTasks.length" class="subtask">
-              {{ checkDoneSubTasks(task.subTasks) }}
+              {{ checkSubTasksDone(task.subTasks) }}
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ import { computed, ref } from 'vue'
 import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
-import type { SubTask } from '@/types/appTypes'
+import type { SubTask, Task, Column } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
 
@@ -69,8 +69,8 @@ const drop = (event: DragEvent) => {
   const target = event.currentTarget as HTMLElement
   if (draggedItem.value && target.classList.contains('board-content')) {
     // check in current board the id of the column of dragged item
-    const oldColumn = currentBoard.value.columns.find((column) =>
-      column.tasks.some((task) => task.id === +draggedItem.value.id)
+    const oldColumn = currentBoard.value.columns.find((column: Column) =>
+      column.tasks.some((task: Task) => task.id === +draggedItem.value.id)
     )
     const newColumnId = +target.id
 
@@ -83,9 +83,9 @@ const drop = (event: DragEvent) => {
   }
 }
 
-const checkDoneSubTasks = (subTasks: SubTask[]) => {
-  const doneSubTasks = subTasks.filter((subTask) => subTask.isDone).length
-  return `${doneSubTasks} of ${subTasks.length} subtasks`
+const checkSubTasksDone = (subTasks: SubTask[]) => {
+  const subTasksDone = subTasks.filter((subTask) => subTask.isDone).length
+  return `${subTasksDone} of ${subTasks.length} subtasks`
 }
 </script>
 

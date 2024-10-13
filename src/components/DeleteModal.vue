@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 // Vue
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 // Components
 import BaseModal from '@/components/BaseComponents/BaseModal.vue'
@@ -20,37 +20,33 @@ import BaseModal from '@/components/BaseComponents/BaseModal.vue'
 // Store
 import { useBoardsStore } from '@/stores/BoardsStore'
 
+// Types
+import type { Task } from '@/types/appTypes'
+
 const boardsStore = useBoardsStore()
 
 const emit = defineEmits(['delete', 'close'])
 
 const props = defineProps<{
   isTask: boolean
-  taskDetails?: { taskId: number; columnId: number }
+  task: Task
+  columnId: number
 }>()
 
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
-const task = ref(
-  currentBoard.value.columns
-    .map((column) => column.tasks)
-    .flat()
-    .find((task) => task.id === props.taskDetails?.taskId)
-)
-
 const getTitle = computed(() => (props.isTask ? 'task' : 'board'))
 
-console.log(currentBoard.value)
 const getTextWarn = computed(() => {
   return props.isTask
-    ? `Are you sure you want to delete the ‘${task.value.title}’ task and its subtasks? This action cannot be reversed.`
+    ? `Are you sure you want to delete the ‘${props.task.title}’ task and its subtasks? This action cannot be reversed.`
     : `Are you sure you want to delete the ‘${currentBoard.value.boardName}’ board? This action will remove all columns and tasks and cannot be reversed.`
 })
 
 const onDelete = () => {
   emit('close')
   if (props.isTask) {
-    console.log('delete task')
+    boardsStore.deleteTask(currentBoard.value.id, props.columnId, props.task.id)
   } else {
     boardsStore.deleteBoard(currentBoard.value.id)
   }
