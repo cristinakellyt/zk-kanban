@@ -17,6 +17,6 @@ interface Board {
   columns: Column[]
 }
 
-type Column = { id: number; name: string; tasks: Task[] }
+type Column = { id: number; name: string; tasks: Task[]; color: string }
 
 export type { Task, SubTask, Board, Column }

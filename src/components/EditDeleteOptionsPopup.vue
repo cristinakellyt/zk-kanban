@@ -50,26 +50,18 @@ const onClose = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(75, 43, 43, 0.5);
-  // z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .options-wrapper {
   position: absolute;
   top: 100%;
   right: 0;
-  // width: 100%;
-  // height: 100%;
-  z-index: 10000000;
-  // position: relative;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
+  z-index: 1000;
 }
 
 .board-options {
   position: sticky;
-  // top: 120%;
   right: 0;
   background-color: var(--bg-color);
   border: pxToRem(1) solid var(--secondary-color);
@@ -78,7 +70,6 @@ const onClose = () => {
 
   display: flex;
   flex-direction: column;
-  // gap: pxToRem(8);
   justify-content: space-around;
   width: pxToRem(200);
   height: pxToRem(100);

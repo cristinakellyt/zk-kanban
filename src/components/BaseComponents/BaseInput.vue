@@ -35,6 +35,7 @@
       @focus="onFocus"
       @blur="onBlur"
     />
+    <span class="input-extra"> <slot name="input-extra"></slot></span>
 
     <span v-if="error" class="text-error">{{ textError }}</span>
   </div>
@@ -172,6 +173,8 @@ const onBlur = (e: Event) => {
     transition: border-color 0.2s;
     font-family: $main-font;
     color: var(--text-color);
+    resize: none;
+    position: relative;
 
     &::placeholder {
       color: rgba($medium-grey, 0.6);
@@ -197,6 +200,7 @@ const onBlur = (e: Event) => {
     transition: border-color 0.2s;
     font-family: $main-font;
     color: var(--text-color);
+    position: relative;
 
     &::placeholder {
       color: rgba($medium-grey, 0.6);
@@ -211,6 +215,13 @@ const onBlur = (e: Event) => {
     &.error {
       border-color: $color-red;
     }
+  }
+
+  .input-extra {
+    position: absolute;
+    top: 50%;
+    right: pxToRem(8);
+    transform: translateY(-43%);
   }
 
   .text-error {
