@@ -2,7 +2,7 @@
   <header ref="header" class="header-wrapper">
     <!-- Logo -->
     <div class="logo-wrapper">
-      <img class="logo-desktop" alt="kanban-logo" :src="imgLogo" v-if="headerMarginLeft === 0" />
+      <img v-if="headerMarginLeft === 0" class="logo-desktop" alt="kanban-logo" :src="imgLogo" />
       <img class="logo-mobile" alt="kanban-logo" src="@/assets/icons/logo-mobile.svg" />
     </div>
     <!-- Board title -->
@@ -17,19 +17,35 @@
       </h1>
       <!-- Header options -->
       <div class="header-options">
+        <!-- Add new task -->
         <BaseButton
           text="Add new task"
           icon="src/assets/icons/icon-add-white.svg"
+          :isDisabled="isBoardOptionsDisabled()"
           @click="emit('addNewTask')"
-          :isDisabled="isAddTaskDisabled()"
         />
-        <div class="icon-options-wrapper">
+        <div
+          class="options-wrapper"
+          :class="{ disabled: isBoardOptionsDisabled() }"
+          @click="isBoardOptionsDisabled() ? null : (isBoardOptionsOpen = !isBoardOptionsOpen)"
+        >
           <img
             src="@/assets/icons/icon-vertical-ellipsis.svg"
             alt="options-icon"
             class="icon-options"
           />
         </div>
+
+        <!-- Edit/Delete board -->
+        <AnimationTransition>
+          <EditDeleteOptionsPopup
+            v-if="isBoardOptionsOpen"
+            :isBoard="true"
+            @close="isBoardOptionsOpen = false"
+            @editBoard="emit('openEditBoard')"
+            @delete="emit('deleteBoard')"
+          />
+        </AnimationTransition>
       </div>
     </div>
   </header>
@@ -41,6 +57,8 @@ import { watch, ref, computed } from 'vue'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
+import AnimationTransition from '@/components/animations/AnimationTransition.vue'
+import EditDeleteOptionsPopup from '@/components/EditDeleteOptionsPopup.vue'
 
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
@@ -63,11 +81,12 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits(['openMobileNav', 'addNewTask'])
+const emit = defineEmits(['openMobileNav', 'addNewTask', 'close', 'openEditBoard', 'deleteBoard'])
 
 const pxToRem = (px: number) => `${px / 16}rem`
 
 const header = ref<HTMLElement | null>(null)
+const isBoardOptionsOpen = ref(false)
 
 //watch props and adjust margin left in the header
 watch(
@@ -87,7 +106,7 @@ const openMobileNav = () => {
   emit('openMobileNav')
 }
 
-const isAddTaskDisabled = () => {
+const isBoardOptionsDisabled = () => {
   // Check if the current board has columns, if not, disable the button
   if ('columns' in currentBoard.value) {
     return currentBoard.value.columns.length === 0
@@ -153,18 +172,26 @@ const isAddTaskDisabled = () => {
     align-items: center;
     gap: pxToRem(16);
     width: max-content;
+    position: relative;
 
     &:deep(.button-text) {
       display: none;
     }
 
-    .icon-options-wrapper {
+    .options-wrapper {
       cursor: pointer;
       height: 100%;
-      padding: 0 pxToRem(8);
+      font-size: pxToRem(14);
+      font-weight: 500;
+      color: var(--text-color);
 
       .icon-options {
         width: pxToRem(14);
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
       }
     }
   }
@@ -179,7 +206,7 @@ const isAddTaskDisabled = () => {
         display: block;
       }
 
-      .icon-options-wrapper {
+      .options-wrapper {
         .icon-options {
           width: pxToRem(12);
         }

@@ -14,7 +14,9 @@ interface SubTask {
 interface Board {
   id: number
   boardName: string
-  columns: { id: number; name: string; tasks: Task[] }[]
+  columns: Column[]
 }
 
-export type { Task, SubTask, Board }
+type Column = { id: number; name: string; tasks: Task[] }
+
+export type { Task, SubTask, Board, Column }

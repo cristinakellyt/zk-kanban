@@ -71,7 +71,7 @@
       </div>
 
       <div class="buttons-options">
-        <BaseButton text="Create Task" buttonType="submit" form="taskForm" />
+        <BaseButton :text="isEdit ? 'Save' : 'Create Task'" buttonType="submit" form="taskForm" />
       </div>
     </div>
   </div>
@@ -90,38 +90,41 @@ import BaseDropdown from './BaseComponents/BaseDropdown.vue'
 import { useBoardsStore } from '@/stores/BoardsStore'
 
 //Types
-import type { SubTask, Task } from '@/types/appTypes'
+import type { SubTask, Task, Column } from '@/types/appTypes'
 
-//TODO: Refactor this function to a helper file
-const generateNumericId = () => {
-  return Math.floor(Math.random() * 1000000)
-}
+//Helpers
+import generateNumericId from '@/utils/generateNumericId'
+
+// Constants
+import { BOILERPLATE_SUBTASKS } from '@/constants/boilerplateContent'
+
+const emit = defineEmits(['close'])
+const boardsStore = useBoardsStore()
 
 const props = defineProps<{
-  taskName?: string
-  subtasks?: SubTask[]
-  description?: string
+  isEdit: boolean
+  task?: Task
+  columnId?: number
 }>()
-
-const boardsStore = useBoardsStore()
 
 // use copied board to avoid reactivity issues
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
+const taskColumnsOptions = computed(() =>
+  JSON.parse(JSON.stringify(boardsStore.getCurrentBoardColumns))
+)
 
-const emit = defineEmits(['close'])
+const currentColumn = ref(
+  currentBoard.value.columns.find((column: Column) => column.id === props.columnId)
+)
 
-const BOILERPLATE_SUBTASKS = [{ id: generateNumericId(), name: '', isDone: false }] as SubTask[]
-
-const isEdit = ref(props.taskName ? true : false)
-const subTasks = ref(props.subtasks ? props.subtasks : BOILERPLATE_SUBTASKS)
-const inputTaskName = ref(props.taskName ? props.taskName : '')
+const subTasks = ref(props.isEdit ? props.task?.subTasks : structuredClone(BOILERPLATE_SUBTASKS))
+const inputTaskName = ref(props.isEdit ? props.task?.title : '')
 const taskNameError = ref(false)
-const taskDescription = ref(props.description ? props.description : '')
-const taskColumnsOptions = computed(() => boardsStore.getCurrentBoardColumns)
-const selectedColumn = ref(taskColumnsOptions.value[0])
+const taskDescription = ref(props.isEdit ? props.task?.description : '')
+const selectedColumn = ref(props.isEdit ? currentColumn.value : taskColumnsOptions.value[0])
 
 const getTitle = computed(() => {
-  return isEdit.value ? 'Edit task' : 'Add New Task'
+  return props.isEdit ? 'Edit task' : 'Add New Task'
 })
 
 const updateTaskName = (value: string) => {
@@ -130,11 +133,11 @@ const updateTaskName = (value: string) => {
 }
 
 const addNewSubtask = () => {
-  subTasks.value.push({ id: generateNumericId(), name: '', isDone: false })
+  subTasks.value?.push({ id: generateNumericId(), name: '', isDone: false })
 }
 
 const deleteSubtaskInput = (id: number) => {
-  subTasks.value = subTasks.value.filter((subtask) => subtask.id !== id)
+  subTasks.value = subTasks.value?.filter((subtask) => subtask.id !== id)
 }
 
 const submitTask = () => {
@@ -143,18 +146,22 @@ const submitTask = () => {
   if (taskNameError.value) return
 
   // Remove empty columns
-  subTasks.value = subTasks.value.filter((subtask) => subtask.name !== '')
+  subTasks.value = subTasks.value?.filter((subtask) => subtask.name !== '')
 
   const taskData = {
-    id: generateNumericId(),
+    id: props.isEdit ? props.task?.id : generateNumericId(),
     title: inputTaskName.value,
     description: taskDescription.value,
     subTasks: subTasks.value
   } as Task
 
-  if (isEdit.value) {
-    //test when it is ready
-    console.log('edit task')
+  if (props.isEdit) {
+    boardsStore.editTask(
+      currentBoard.value.id,
+      selectedColumn.value.id,
+      currentColumn.value.id,
+      taskData
+    )
   } else {
     boardsStore.addTask(currentBoard.value.id, selectedColumn.value.id, taskData)
   }
@@ -192,7 +199,6 @@ const submitTask = () => {
   border-radius: pxToRem(5);
   gap: pxToRem(16);
   padding: pxToRem(32) pxToRem(16);
-  // overflow-y: scroll;
   z-index: 100;
 
   .task-title {

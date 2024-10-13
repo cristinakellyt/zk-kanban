@@ -3,6 +3,7 @@
     <div class="backdrop" @click="close"></div>
     <div class="mobile-nav">
       <div class="nav-inner">
+        <!-- Boards -->
         <p class="all-boards-count">All boards ({{ boards.length }})</p>
         <nav class="navigation">
           <ul class="navigation-list">
@@ -20,6 +21,7 @@
         </nav>
       </div>
 
+      <!-- Create new Board -->
       <div class="nav-options">
         <BaseButton
           v-if="boards.length > 0"

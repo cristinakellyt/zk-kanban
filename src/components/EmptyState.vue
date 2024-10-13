@@ -19,25 +19,25 @@ import { computed } from 'vue'
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
 
-const emit = defineEmits(['addNewBoard'])
+const emit = defineEmits(['addNewBoard', 'addNewColumn'])
 
 const props = defineProps<{
-  isEmpty: 'column' | 'board'
+  emptyStateType: 'column' | 'board' | undefined
 }>()
 
 const getTitle = computed(() => {
-  return props.isEmpty === 'column'
+  return props.emptyStateType === 'column'
     ? 'This board is empty. Create a new column to get started!'
     : "You don't have any boards yet. Create one to get started!"
 })
 
 const getButtonText = computed(() => {
-  return props.isEmpty === 'column' ? 'Add New Column' : 'Add New Board'
+  return props.emptyStateType === 'column' ? 'Add New Column' : 'Add New Board'
 })
 
 const selectEmitType = () => {
-  if (props.isEmpty === 'column') {
-    emit('addNewBoard', true)
+  if (props.emptyStateType === 'column') {
+    emit('addNewColumn')
   } else {
     emit('addNewBoard')
   }
