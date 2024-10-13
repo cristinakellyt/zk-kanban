@@ -19,7 +19,9 @@
             :error="boardNameError"
             textError="Can't be empty"
             :isRequired="false"
-          />
+          >
+            <!-- <slot name="input-extra">y</slot> -->
+          </BaseInput>
           <!-- Board Columns -->
           <fieldset>
             <legend class="label" v-if="columns.length > 0">Columns</legend>
@@ -31,7 +33,20 @@
                 :input="column.name"
                 @inputChange="(value: string) => (columns[index].name = value)"
                 :isRequired="false"
-              />
+              >
+                <!-- Color Picker -->
+                <template #input-extra>
+                  <BaseColorPicker
+                    :color="column.color"
+                    @selectedColor="
+                      (color: string) => {
+                        columns[index].color = color
+                        console.log(color)
+                      }
+                    "
+                /></template>
+              </BaseInput>
+
               <img
                 src="@/assets/icons/icon-cross.svg"
                 alt="delete-icon"
@@ -68,6 +83,7 @@ import { computed, ref } from 'vue'
 // Components
 import BaseInput from './BaseComponents/BaseInput.vue'
 import BaseButton from './BaseComponents/BaseButton.vue'
+import BaseColorPicker from './BaseComponents/BaseColorPicker.vue'
 
 //store
 import { useBoardsStore } from '@/stores/BoardsStore'

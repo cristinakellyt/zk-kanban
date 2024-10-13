@@ -3,7 +3,10 @@
     <!-- Column -->
     <div class="board-column" v-for="column in currentBoard.columns" :key="column.id">
       <div class="board-header">
-        <h2 class="board-title">{{ column.name }} ({{ column.tasks.length }})</h2>
+        <h2 class="board-title">
+          <span :style="{ backgroundColor: column.color }" class="column-color"></span>
+          {{ column.name }} ({{ column.tasks.length }})
+        </h2>
       </div>
       <div
         class="board-content"
@@ -113,10 +116,20 @@ $board-column-width-desktop: pxToRem(300);
   .board-header {
     padding: pxToRem(16);
     .board-title {
-      color: var(--medium-grey);
+      display: flex;
+      align-items: center;
+      color: var(--text-color);
       text-transform: uppercase;
       letter-spacing: pxToRem(1);
       font-size: pxToRem(10);
+
+      .column-color {
+        width: pxToRem(14);
+        height: pxToRem(14);
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: pxToRem(8);
+      }
     }
   }
 

@@ -162,6 +162,8 @@ const saveTaskDetail = () => {
     color: var(--medium-grey);
     font-size: pxToRem(14);
     font-weight: 500;
+    max-height: pxToRem(110);
+    overflow: auto;
   }
 
   .subtasks {
