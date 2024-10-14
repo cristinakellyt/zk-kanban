@@ -52,5 +52,6 @@ watch(
   border: none;
   border-radius: pxToRem(5);
   cursor: pointer;
+  background-color: transparent;
 }
 </style>

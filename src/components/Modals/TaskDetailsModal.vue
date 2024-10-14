@@ -62,9 +62,9 @@
 import { computed, ref } from 'vue'
 
 // Components
-import BaseButton from './BaseComponents/BaseButton.vue'
-import BaseCheckBox from './BaseComponents/BaseCheckBox.vue'
-import BaseDropdown from './BaseComponents/BaseDropdown.vue'
+import BaseButton from '@/components/BaseComponents/BaseButton.vue'
+import BaseCheckBox from '@/components/BaseComponents/BaseCheckBox.vue'
+import BaseDropdown from '@/components/BaseComponents/BaseDropdown.vue'
 import EditDeleteOptionsPopup from '@/components/EditDeleteOptionsPopup.vue'
 import AnimationTransition from '@/components/animations/AnimationTransition.vue'
 

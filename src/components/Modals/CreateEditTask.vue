@@ -82,9 +82,9 @@
 import { computed, ref } from 'vue'
 
 // Components
-import BaseInput from './BaseComponents/BaseInput.vue'
-import BaseButton from './BaseComponents/BaseButton.vue'
-import BaseDropdown from './BaseComponents/BaseDropdown.vue'
+import BaseInput from '@/components/BaseComponents/BaseInput.vue'
+import BaseButton from '@/components/BaseComponents/BaseButton.vue'
+import BaseDropdown from '@/components/BaseComponents/BaseDropdown.vue'
 
 //Images
 import iconAddPurple from '@/assets/icons/icon-add-purple.svg'
