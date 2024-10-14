@@ -8,7 +8,7 @@
     <!-- Mask - Used to automatically close the dropdown-->
     <div v-if="isDropdownShown" class="status-mask" @click="toggleDropdown" />
 
-    <div :id="`dropdown-toggle-${id}`" class="basic-dropdown" @click="toggleDropdown()">
+    <div id="dropdown" class="basic-dropdown" @click="toggleDropdown()" data-testid="dropdown">
       <!-- The placeholder/selected choice indicator -->
       <div class="dropdown-text-container">
         <span v-if="!selected" class="dropdown-text">{{ placeholder }}</span>
@@ -28,6 +28,7 @@
             <div
               v-for="option in dropdownOptions"
               :id="`option-${option.id}`"
+              :data-testid="`option-${option.id}`"
               :key="option.id"
               :class="{ 'selected-option': selected ? option.id === selected.id : false }"
               class="option"
