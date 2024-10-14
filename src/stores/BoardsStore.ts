@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import type { Board, Task, Column } from '@/types/appTypes'
+import DATA from '@/constants/initialData'
 
 const STORAGE_KEY = 'boardsData'
 const CURRENT_BOARD_KEY = 'currentBoard'
+const initialData = JSON.stringify(DATA)
 
 export const useBoardsStore = defineStore({
   id: 'BoardsStore',
@@ -30,6 +32,12 @@ export const useBoardsStore = defineStore({
     saveToLocalStorage() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.boardsData))
       localStorage.setItem(CURRENT_BOARD_KEY, JSON.stringify(this.currentBoard))
+    },
+
+    setInitialBoardsData(initialData: Board) {
+      this.boardsData.push(initialData)
+      this.currentBoard = initialData
+      this.saveToLocalStorage()
     },
 
     addBoard(board: Board) {

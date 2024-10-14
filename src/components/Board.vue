@@ -141,6 +141,7 @@ $board-column-width-desktop: pxToRem(300);
     gap: pxToRem(16);
     border-radius: pxToRem(5);
     color: var(--text-color);
+    overflow: auto;
 
     &.empty-column {
       background-color: var(--secondary-color-2);
