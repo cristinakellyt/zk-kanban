@@ -4,7 +4,7 @@
 
     <div class="task-wrapper">
       <div class="task-header">
-        <h3 class="task-title">{{ task.title }}</h3>
+        <h3 class="task-title">{{ taskDetails.title }}</h3>
         <img
           src="@/assets/icons/icon-vertical-ellipsis.svg"
           alt="option-icon"
@@ -33,11 +33,11 @@
           />
         </AnimationTransition>
       </div>
-      <p class="description">{{ task.description }}</p>
+      <p class="description">{{ taskDetails.description }}</p>
 
       <div class="subtasks">
         <p class="subtask-title">{{ getSubtaskTitle }}</p>
-        <div v-for="subtask in task.subTasks" :key="subtask.id">
+        <div v-for="subtask in taskDetails.subTasks" :key="subtask.id">
           <BaseCheckBox :id="subtask.id" :labelText="subtask.name" v-model="subtask.isDone" />
         </div>
       </div>
@@ -85,6 +85,7 @@ const props = defineProps<{
 
 const isBoardOptionsOpen = ref(false)
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
+const taskDetails = ref(JSON.parse(JSON.stringify(props.task)))
 
 const currentColumn = ref(
   currentBoard.value.columns.find((column: Column) => column.id === props.columnId)
@@ -99,12 +100,17 @@ const selectedColumn = ref(
 )
 
 const getSubtaskTitle = computed(() => {
-  const subtasksDone = props.task.subTasks.filter((subtask) => subtask.isDone).length
-  return `Subtasks (${subtasksDone} of ${props.task.subTasks.length})`
+  const subtasksDone = taskDetails.value.subTasks.filter((subtask) => subtask.isDone).length
+  return `Subtasks (${subtasksDone} of ${taskDetails.value.subTasks.length})`
 })
 
 const saveTaskDetail = () => {
-  boardsStore.editTask(currentBoard.value.id, selectedColumn.value.id, props.columnId, props.task)
+  boardsStore.editTask(
+    currentBoard.value.id,
+    selectedColumn.value.id,
+    props.columnId,
+    taskDetails.value
+  )
   emit('close')
 }
 </script>

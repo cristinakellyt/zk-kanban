@@ -105,6 +105,8 @@ export const useBoardsStore = defineStore({
       if (newColumnId !== oldColumnId) {
         this.updateTaskColumn(boardId, task.id, newColumnId, oldColumnId)
       }
+
+      this.setCurrentBoard(boardId)
       this.saveToLocalStorage()
     },
 

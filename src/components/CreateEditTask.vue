@@ -115,15 +115,18 @@ const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCur
 const taskColumnsOptions = computed(() =>
   JSON.parse(JSON.stringify(boardsStore.getCurrentBoardColumns))
 )
+const taskDetails = ref(props.task ? JSON.parse(JSON.stringify(props.task)) : null)
 
 const currentColumn = ref(
   currentBoard.value.columns.find((column: Column) => column.id === props.columnId)
 )
 
-const subTasks = ref(props.isEdit ? props.task?.subTasks : structuredClone(BOILERPLATE_SUBTASKS))
-const inputTaskName = ref(props.isEdit ? props.task?.title : '')
+const subTasks = ref(
+  props.isEdit ? taskDetails.value?.subTasks : structuredClone(BOILERPLATE_SUBTASKS)
+)
+const inputTaskName = ref(props.isEdit ? taskDetails.value?.title : '')
 const taskNameError = ref(false)
-const taskDescription = ref(props.isEdit ? props.task?.description : '')
+const taskDescription = ref(props.isEdit ? taskDetails.value?.description : '')
 const selectedColumn = ref(props.isEdit ? currentColumn.value : taskColumnsOptions.value[0])
 
 const getTitle = computed(() => {
@@ -152,7 +155,7 @@ const submitTask = () => {
   subTasks.value = subTasks.value?.filter((subtask) => subtask.name !== '')
 
   const taskData = {
-    id: props.isEdit ? props.task?.id : generateNumericId(),
+    id: props.isEdit ? taskDetails.value?.id : generateNumericId(),
     title: inputTaskName.value,
     description: taskDescription.value,
     subTasks: subTasks.value
