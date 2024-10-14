@@ -19,4 +19,11 @@ interface Board {
 
 type Column = { id: number; name: string; tasks: Task[]; color: string }
 
+enum ColorTheme {
+  Light = 'light',
+  Dark = 'dark'
+}
+
 export type { Task, SubTask, Board, Column }
+
+export { ColorTheme }

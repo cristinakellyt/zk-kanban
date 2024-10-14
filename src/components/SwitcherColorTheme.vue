@@ -4,25 +4,37 @@ import { BaseTransition } from 'vue';
     <img :src="iconLightTheme" alt="icon-light-theme" />
     <!-- Toggle -->
     <BaseToggle @changeToggle="updateColorTheme" :checkedVModel="isDarkThemeColor" />
-    <img :src="iconDarkTheme" alt="icon-dark-theme" />
+    <img :src="iconDarkTheme" alt="icon-dark" />
   </div>
 </template>
 
 <script setup lang="ts">
+//Vue
 import { computed, ref } from 'vue'
+
+// Components
 import BaseToggle from '@/components/BaseComponents/BaseToggle.vue'
+
+//Images
 import iconDarkTheme from '@/assets/icons/icon-dark-theme.svg'
 import iconLightTheme from '@/assets/icons/icon-light-theme.svg'
 
-const isDarkThemeColor = ref(document.getElementById('app')?.classList.contains('dark-theme'))
+//Store
+import { useDesignSettingsStore } from '@/stores/DesignSettingsStore'
+
+//Types
+import { ColorTheme } from '@/types/appTypes'
+
+const designSettingsStore = useDesignSettingsStore()
+const isDarkThemeColor = ref(designSettingsStore.getThemeColor === ColorTheme.Dark)
 
 const updateColorTheme = (isChecked: boolean) => {
   if (isChecked) {
     isDarkThemeColor.value = true
-    document.getElementById('app')?.classList.add('dark-theme')
+    designSettingsStore.setThemeColor(ColorTheme.Dark)
   } else {
     isDarkThemeColor.value = false
-    document.getElementById('app')?.classList.remove('dark-theme')
+    designSettingsStore.setThemeColor(ColorTheme.Light)
   }
 }
 </script>

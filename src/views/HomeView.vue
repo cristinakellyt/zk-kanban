@@ -113,19 +113,22 @@ import imgLogoLight from '@/assets/icons/logo-light.svg'
 
 // Store
 import { useBoardsStore } from '@/stores/BoardsStore'
+import { useDesignSettingsStore } from '@/stores/DesignSettingsStore'
 
 // Types
 import type { Task } from '@/types/appTypes'
+import { ColorTheme } from '@/types/appTypes'
 
 const boardsStore = useBoardsStore()
 const boards = computed(() => JSON.parse(JSON.stringify(boardsStore.getBoardsData)))
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
 //Style and design variables
+const designSettingsStore = useDesignSettingsStore()
+const isDarkThemeColor = computed(() => designSettingsStore.getThemeColor === ColorTheme.Dark)
 const MARGIN_LEFT = 300
 const MARGIN_LEFT_ZERO = 0
 const currentMarginLeft = ref(MARGIN_LEFT)
-const getResponsiveLogo = ref(imgLogoDark)
 const appElement = document.getElementById('app')
 const isNavMobileOpen = ref(false)
 
@@ -160,21 +163,9 @@ watch(
   { immediate: true }
 )
 
-// Create a mutation observer to change the logo when the color theme changes
-const observer = new MutationObserver((mutationsList) => {
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      getResponsiveLogo.value = appElement?.classList.contains('dark-theme')
-        ? imgLogoLight
-        : imgLogoDark
-    }
-  }
+const getResponsiveLogo = computed(() => {
+  return isDarkThemeColor.value ? imgLogoLight : imgLogoDark
 })
-
-// Start observing the 'app' element for class attribute changes
-if (appElement) {
-  observer.observe(appElement, { attributes: true })
-}
 
 const showNavMobile = () => {
   isNavMobileOpen.value = true
