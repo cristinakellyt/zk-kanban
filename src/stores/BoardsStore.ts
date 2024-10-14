@@ -38,8 +38,8 @@ export const useBoardsStore = defineStore({
       this.saveToLocalStorage()
     },
 
-    updateBoard(boardId: number, board: Board) {
-      const index = this.boardsData.findIndex((b) => b.id === boardId)
+    updateBoard(board: Board) {
+      const index = this.boardsData.findIndex((b) => b.id === board.id)
       this.boardsData[index] = board
       this.setCurrentBoard(board.id)
       this.saveToLocalStorage()
@@ -72,6 +72,7 @@ export const useBoardsStore = defineStore({
       const boardIndex = this.boardsData.findIndex((b) => b.id === boardId)
       const columnIndex = this.boardsData[boardIndex].columns.findIndex((c) => c.id === columnId)
       this.boardsData[boardIndex].columns[columnIndex].tasks.push(task)
+      this.setCurrentBoard(boardId)
       this.saveToLocalStorage()
     },
 
@@ -89,6 +90,7 @@ export const useBoardsStore = defineStore({
       const task = this.boardsData[boardIndex].columns[oldColumnIndex].tasks.splice(taskIndex, 1)
       //replace task to new column
       this.boardsData[boardIndex].columns[newColumnIndex].tasks.push(task[0])
+      this.setCurrentBoard(boardId)
       this.saveToLocalStorage()
     },
 

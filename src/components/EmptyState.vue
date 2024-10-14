@@ -6,7 +6,7 @@
         :text="getButtonText"
         buttonStyle="primary"
         @click="selectEmitType"
-        icon="src/assets/icons/icon-add-white.svg"
+        :icon="iconAddWhite"
       />
     </div>
   </div>
@@ -15,6 +15,9 @@
 <script setup lang="ts">
 // Vue
 import { computed } from 'vue'
+
+//Images
+import iconAddWhite from '@/assets/icons/icon-add-white.svg'
 
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'

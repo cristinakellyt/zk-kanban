@@ -41,7 +41,6 @@
                     @selectedColor="
                       (color: string) => {
                         columns[index].color = color
-                        console.log(color)
                       }
                     "
                 /></template>
@@ -64,7 +63,7 @@
           text="Add New Column"
           buttonStyle="secondary"
           @click="addNewColumn"
-          icon="src/assets/icons/icon-add-purple.svg"
+          :icon="iconAddPurple"
         />
         <BaseButton
           :text="isEdit ? 'Update Board' : 'Create New Board'"
@@ -84,6 +83,9 @@ import { computed, ref } from 'vue'
 import BaseInput from './BaseComponents/BaseInput.vue'
 import BaseButton from './BaseComponents/BaseButton.vue'
 import BaseColorPicker from './BaseComponents/BaseColorPicker.vue'
+
+//Images
+import iconAddPurple from '@/assets/icons/icon-add-purple.svg'
 
 //store
 import { useBoardsStore } from '@/stores/BoardsStore'
@@ -108,7 +110,9 @@ const props = defineProps<{
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))
 
 const boardId = ref(props.isEdit ? currentBoard.value.id : generateNumericId())
-const columns = ref(props.isEdit ? currentBoard.value.columns : BOILERPLATE_COLUMNS)
+const columns = ref(
+  props.isEdit ? currentBoard.value.columns : structuredClone(BOILERPLATE_COLUMNS)
+)
 const boardName = ref(props.isEdit ? currentBoard.value.boardName : '')
 const boardNameError = ref(false)
 
@@ -144,7 +148,7 @@ const submitBoard = () => {
   } as Board
 
   if (props.isEdit) {
-    boardsStore.updateBoard(currentBoard.value.id, boardData)
+    boardsStore.updateBoard(boardData)
   } else {
     boardsStore.addBoard(boardData)
   }

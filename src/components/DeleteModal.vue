@@ -29,8 +29,8 @@ const emit = defineEmits(['delete', 'close'])
 
 const props = defineProps<{
   isTask: boolean
-  task: Task
-  columnId: number
+  task?: Task
+  columnId?: number
 }>()
 
 const currentBoard = computed(() => JSON.parse(JSON.stringify(boardsStore.getCurrentBoard)))

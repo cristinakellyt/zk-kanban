@@ -20,7 +20,7 @@
         <!-- Add new task -->
         <BaseButton
           text="Add new task"
-          icon="src/assets/icons/icon-add-white.svg"
+          :icon="iconAddWhite"
           :isDisabled="isBoardOptionsDisabled()"
           @click="emit('addNewTask')"
         />
@@ -62,6 +62,7 @@ import EditDeleteOptionsPopup from '@/components/EditDeleteOptionsPopup.vue'
 
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
+import iconAddWhite from '@/assets/icons/icon-add-white.svg'
 
 //Store
 import { useBoardsStore } from '@/stores/BoardsStore'

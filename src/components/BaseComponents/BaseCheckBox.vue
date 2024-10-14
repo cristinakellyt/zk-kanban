@@ -56,7 +56,7 @@ $check-box-size: pxToRem(20);
   user-select: none;
   margin-bottom: pxToRem(8);
   width: 100%;
-  background-color: $secondary-color;
+  background-color: var(--secondary-color);
   padding: pxToRem(8) pxToRem(16);
   border-radius: pxToRem(5);
   transition: background-color 0.3s;
