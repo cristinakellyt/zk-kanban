@@ -27,7 +27,7 @@
             <BaseButton
               @click="emit('addNewBoard')"
               text="Create New Board"
-              icon="src/assets/icons/icon-add-purple.svg"
+              :icon="iconAddPurple"
               inverted
             />
           </div>
@@ -65,6 +65,7 @@ import AnimationTransition from '@/components/animations/AnimationTransition.vue
 
 // Images
 import imgLogoDark from '@/assets/icons/logo-dark.svg'
+import iconAddPurple from '@/assets/icons/icon-add-purple.svg'
 
 //store
 import { useBoardsStore } from '@/stores/BoardsStore'

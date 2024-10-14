@@ -28,7 +28,7 @@
           @click="onAddNewBoard"
           extra-class="create-board"
           text="Create New Board"
-          icon="src/assets/icons/icon-add-purple.svg"
+          :icon="iconAddPurple"
           inverted
         />
         <!-- Switch app color -->
@@ -45,6 +45,9 @@ import { computed } from 'vue'
 // Components
 import BaseButton from './BaseComponents/BaseButton.vue'
 import SwitcherColorTheme from '@/components/SwitcherColorTheme.vue'
+
+//Images
+import iconAddPurple from '@/assets/icons/icon-add-purple.svg'
 
 //Store
 import { useBoardsStore } from '@/stores/BoardsStore'

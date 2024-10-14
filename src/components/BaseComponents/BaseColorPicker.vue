@@ -24,8 +24,6 @@ const props = withDefaults(
   }
 )
 
-console.log(props.color)
-
 const selectedColor = ref(props.color)
 
 watch(

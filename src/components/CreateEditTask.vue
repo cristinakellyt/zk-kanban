@@ -55,7 +55,7 @@
               text="Add New Subtask"
               buttonStyle="secondary"
               @click="addNewSubtask"
-              icon="src/assets/icons/icon-add-purple.svg"
+              :icon="iconAddPurple"
             />
           </fieldset>
 
@@ -85,6 +85,9 @@ import { computed, ref } from 'vue'
 import BaseInput from './BaseComponents/BaseInput.vue'
 import BaseButton from './BaseComponents/BaseButton.vue'
 import BaseDropdown from './BaseComponents/BaseDropdown.vue'
+
+//Images
+import iconAddPurple from '@/assets/icons/icon-add-purple.svg'
 
 //store
 import { useBoardsStore } from '@/stores/BoardsStore'
