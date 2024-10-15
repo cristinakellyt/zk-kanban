@@ -102,6 +102,7 @@ $check-box-size: pxToRem(20);
       font-weight: 600;
       font-family: $main-font;
       font-size: inherit;
+      color: var(--text-color);
     }
   }
 }
